@@ -1,0 +1,92 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_005"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning dinner tonight."
+
+[[problem_units]]
+id = "U2"
+kind = "objective"
+content = "Maximize fiber intake."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Fiber content per 100g: okra 3.2g, carrots 2.7g, celery 1.6g, cabbage 2g."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Price per 100g: salmon $4, beef $3.6, pork $1.8, okra $2.6, carrots $1.2, celery $1.6, cabbage $2.3."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Budget: $15."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Total food intake target: 600 grams."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Exactly one protein source (salmon, beef, or pork) is selected."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "At least two kinds of vegetables from okra, carrots, celery, and cabbage are selected."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Total cost of selected foods must not exceed the budget of $15."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Total weight of selected foods must equal 600 grams."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "protein_selection_rule"
+severity = "P1"
+severity_reason = "Without this information, the agent would assume any combination of protein sources is allowed, leading to a model that does not enforce the intended discrete choice structure and could select multiple proteins. This would make the model materially inaccurate for the user’s actual dinner planning problem."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Are there any restrictions on how many types of protein I can choose? Should I pick exactly one?", "Do I have to choose exactly one protein from salmon, beef, and pork, or can I combine them?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the rule for selecting protein sources, such as whether exactly one protein must be chosen, or whether multiple proteins can be combined."
+failure_modes = ["Assuming that any combination of proteins with continuous amounts is allowed.", "Assuming that no protein is required.", "Assuming that all three proteins must be included."]
+simulator_answer = "Yes, I want to pick exactly one protein source from those three: salmon, beef, or pork. So please include only one of them in the meal plan."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "min_vegetable_types"
+severity = "P1"
+severity_reason = "Without this information, the agent could allow selecting only one vegetable type, which would not satisfy the user’s requirement for variety and could produce a meal plan without sufficient vegetable diversity, leading to a materially different solution."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["Do I need to include at least a certain number of different vegetables? For example, must I pick at least two kinds?", "Is there a minimum number of vegetable types I must choose from the list?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the minimum number of vegetable types, such as whether at least two different vegetables must be selected."
+failure_modes = ["Assuming that only one type of vegetable can be selected.", "Assuming that all four vegetables must be included.", "Assuming that vegetables can be chosen arbitrarily without a minimum variety constraint."]
+simulator_answer = "Yes, I’d like to have at least two different kinds of vegetables from the list: okra, carrots, celery, and cabbage. So please make sure the meal includes at least two of them."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U2", "U9", "U10", "U3", "U4", "U5", "U6"]
+content = "I need help planning dinner tonight, with the goal to maximize fiber intake, subject to the constraints that the total cost of selected foods must not exceed the budget of $15 and the total weight must equal 600 grams.\n\nFiber content per 100g: okra 3.2g, carrots 2.7g, celery 1.6g, cabbage 2g.\n\nPrice per 100g: salmon $4, beef $3.6, pork $1.8, okra $2.6, carrots $1.2, celery $1.6, cabbage $2.3.\n\nBudget: $15.\n\nTotal food intake target: 600 grams."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

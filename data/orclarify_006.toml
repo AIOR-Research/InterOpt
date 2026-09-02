@@ -1,0 +1,107 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_006"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production schedule for a factory over the next year."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table 1-10: Contract reservations per quarter per product:\n| Product | 1    | 2    | 3    | 4    |\n|---------|------|------|------|------|\n| I       | 1500 | 1000 | 2000 | 1200 |\n| II      | 1500 | 1500 | 1200 | 1500 |\n| III     | 1000 | 2000 | 1500 | 2500 |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "At the beginning of the first quarter, there is no inventory for products I, II, and III (i.e., initial inventory is 0 for each product)."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "It is required to have 150 units in stock for each product by the end of the fourth quarter."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "The factory has 15,000 production hours per quarter."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Each unit of product I requires 2 hours, product II requires 4 hours, and product III requires 3 hours."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Delay compensation: for products I and II, 20 yuan per unit per quarter delay; for product III, 10 yuan per unit per quarter delay."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Inventory holding cost: 5 yuan per unit per quarter for products produced but not delivered in the current quarter."
+
+[[problem_units]]
+id = "U9"
+kind = "objective"
+content = "Minimize the total cost (compensation cost + inventory holding cost)."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Product I cannot be produced in the second quarter."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "At the end of the fourth quarter, the inventory of each product must be 150 units."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "In each quarter, total production hours used must not exceed 15,000 hours."
+
+[[problem_units]]
+id = "U13"
+kind = "constraint"
+content = "All contract reservations must be delivered (late delivery is allowed with compensation)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "product_I_no_production_Q2"
+severity = "P1"
+severity_reason = "Without this constraint, the model would incorrectly allow production of Product I in Q2, leading to a schedule that violates a real-world equipment restriction. The model can still be formulated, but it would be materially inaccurate."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Can Product I be produced in the second quarter?", "Are there any restrictions on the quarters in which Product I can be manufactured?"]
+semantic_hit_rule = "The agent's question must explicitly ask about production restrictions for specific quarters, particularly regarding Product I in the second quarter."
+failure_modes = ["Silently assuming Product I can be produced in all quarters, resulting in a schedule that uses Q2 for Product I production."]
+simulator_answer = "Product I cannot be produced in the second quarter due to an equipment change."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "contract_reservations_must_be_delivered"
+severity = "P1"
+severity_reason = "Without this constraint, the modeling agent might not realize that all contract reservations are firm requirements that must be eventually delivered even if late, and might instead model lost sales or treat demand as optional. This directly affects the demand fulfillment semantics and model correctness."
+problem_unit_id = "U13"
+reference_acceptable_questions = ["Do we have to satisfy all contract reservations eventually, even if we deliver late?", "Is late delivery allowed and do all reservations need to be fulfilled?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the requirement to fulfill all contract reservations, or about whether late delivery is permitted and how it is handled."
+failure_modes = ["Silently assuming that demand not met on time is lost and incurs only a penalty, without requiring back fulfillment.", "Assuming demand must be met exactly on time, with no backlogging allowed."]
+simulator_answer = "All contract reservations must be delivered. Late delivery is allowed, and the compensation costs you mentioned apply for any delay."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U9", "U11", "U12", "U2", "U3", "U4", "U5", "U6", "U7", "U8"]
+content = "I need help creating a production schedule for a factory over the next year, aiming to minimize the total cost (compensation cost + inventory holding cost). At the end of the fourth quarter, the inventory of each product must be 150 units, and in each quarter, total production hours used must not exceed 15,000 hours.\n\nTable 1-10: Contract reservations per quarter per product:\n| Product | 1    | 2    | 3    | 4    |\n|---------|------|------|------|------|\n| I       | 1500 | 1000 | 2000 | 1200 |\n| II      | 1500 | 1500 | 1200 | 1500 |\n| III     | 1000 | 2000 | 1500 | 2500 |\n\nAt the beginning of the first quarter, there is no inventory for products I, II, and III (i.e., initial inventory is 0 for each product).\n\nIt is required to have 150 units in stock for each product by the end of the fourth quarter.\n\nThe factory has 15,000 production hours per quarter.\n\nEach unit of product I requires 2 hours, product II requires 4 hours, and product III requires 3 hours.\n\nDelay compensation: for products I and II, 20 yuan per unit per quarter delay; for product III, 10 yuan per unit per quarter delay.\n\nInventory holding cost: 5 yuan per unit per quarter for products produced but not delivered in the current quarter."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

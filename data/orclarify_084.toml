@@ -1,0 +1,117 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_084"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help recruiting new employees for my team."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Salary requirements: Candidate A: $8100, Candidate B: $20000, Candidate C: $21000, Candidate D: $3000, Candidate E: $8000."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Candidate degrees: A: Bachelor's, B: Master's, C: Doctoral, D: No degree, E: No degree."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Candidate work experience: A: 3 years, B: 10 years, C: 4 years, D: 3 years, E: 7 years."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Maximum number of new employees: 3."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The number of selected candidates cannot exceed 3."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Budget: $35,000."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Total payment to selected candidates cannot exceed the budget of $35,000."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Select at least one candidate with a Master's or Doctoral degree."
+
+[[problem_units]]
+id = "U10"
+kind = "data"
+content = "Minimum total work experience: 12 years."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "Total work experience of selected candidates must be at least 12 years."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "At most one of candidate A and E can be selected."
+
+[[problem_units]]
+id = "U13"
+kind = "data"
+content = "Minimum number of new employees: 2."
+
+[[problem_units]]
+id = "U14"
+kind = "constraint"
+content = "Hire at least 2 new employees."
+
+[[problem_units]]
+id = "U15"
+kind = "objective"
+content = "Minimize total salary paid to selected candidates."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "advanced_degree_requirement"
+severity = "P1"
+severity_reason = "Without this qualification constraint, the model may select only low-cost candidates without advanced degrees, leading to a solution that is business-invalid; the optimization problem remains otherwise well-defined, so it is an important clarification gap."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["Do we have any educational requirements for the hires, like needing someone with an advanced degree?", "Is it mandatory to include at least one person with a Master's or PhD?"]
+semantic_hit_rule = "The agent's question must mention a minimum requirement for advanced degrees (Master's or Doctoral) or inquire about educational qualification constraints."
+failure_modes = ["Assuming no minimum degree requirement and selecting only candidates without advanced degrees", "Overlooking the need for at least one Master's or Doctoral hire"]
+simulator_answer = "Yes, at least one of the selected candidates must hold a Master's or a Doctoral degree."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "minimize_total_salary_objective"
+severity = "P0"
+severity_reason = "Without a stated objective, the problem lacks a clear goal; a modeling agent cannot formulate an optimization model without inventing the objective, making the task ill-posed."
+problem_unit_id = "U15"
+reference_acceptable_questions = ["What is the objective of this hiring decision? Are we trying to minimize total salary costs?", "Is the goal to minimize the total salaries paid, or something else?"]
+semantic_hit_rule = "The agent's question must ask about the optimization goal or objective, specifically whether the goal is to minimize total salary, or inquire about what to optimize."
+failure_modes = ["Assuming a different objective such as minimizing the number of hires or maximizing total work experience", "Treating the problem as a pure feasibility problem without asking for the objective"]
+simulator_answer = "We want to keep the total salaries as low as possible. So the goal is to minimize the sum of salaries for the people we hire."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U8", "U11", "U12", "U14", "U2", "U3", "U4", "U5", "U7", "U10", "U13"]
+content = "I need help recruiting new employees for my team, with the number of selected candidates not exceeding 3 and at least 2 new employees hired. Total payment to selected candidates cannot exceed the budget of $35,000, and their total work experience must be at least 12 years. Additionally, at most one of candidate A and E can be selected.\n\nSalary requirements: Candidate A: $8100, Candidate B: $20000, Candidate C: $21000, Candidate D: $3000, Candidate E: $8000.\n\nCandidate degrees: A: Bachelor's, B: Master's, C: Doctoral, D: No degree, E: No degree.\n\nCandidate work experience: A: 3 years, B: 10 years, C: 4 years, D: 3 years, E: 7 years.\n\nMaximum number of new employees: 3.\n\nBudget: $35,000.\n\nMinimum total work experience: 12 years.\n\nMinimum number of new employees: 2."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

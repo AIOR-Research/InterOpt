@@ -1,0 +1,71 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_072"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "The Li family plans to invest their retirement fund in commercial real estate. I need help deciding which properties to purchase."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Annual income: Property 1: $12,500, Property 2: $35,000, Property 3: $23,000, Property 4: $100,000."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Cost: Property 1: $1.5 million, Property 2: $2.1 million, Property 3: $2.3 million, Property 4: $4.2 million."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Budget: $7 million."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "There is only one of each property available."
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Maximize total annual income."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The total cost of purchased properties must not exceed the budget."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "If they purchase Property 4, they cannot purchase Property 3."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "annual_income_definition"
+severity = "P2"
+severity_reason = "The objective is clear—maximize the sum of incomes of selected properties—but the problem does not state whether the given annual income figures are gross or net of ongoing expenses (maintenance, taxes, etc.). The agent can still formulate a valid optimization model under the common assumption that these are net incomes, so this is a low-impact detail. Clarifying it prevents an overly optimistic income projection if the user intended gross figures."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["Do the annual income numbers already account for property taxes, maintenance, and management costs, or are they just the rental income we'd collect before expenses?", "Are the annual income amounts you gave the net income we actually get after all operating expenses, or do we need to subtract those ourselves?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the definition of the annual income—specifically whether it is gross or net, or whether expenses, taxes, or other deductions are already factored in."
+failure_modes = ["The agent silently assumes the given annual incomes are net profit, leading to a model that ignores potential hidden costs.", "The agent assumes there are no ongoing expenses at all, which could overstate the real return if the user had preliminary gross figures in mind."]
+simulator_answer = "Those annual income numbers are what we would receive from each property according to the information I have. I'm not sure if that's before or after expenses—I haven't gotten a breakdown of operating costs. So the numbers I gave are just the income we expect."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U8", "U2", "U3", "U4", "U5"]
+content = "The Li family plans to invest their retirement fund in commercial real estate, and I need help deciding which properties to purchase, with the constraints that the total cost of purchased properties must not exceed the budget, and if they purchase Property 4, they cannot purchase Property 3.\n\nAnnual income: Property 1: $12,500, Property 2: $35,000, Property 3: $23,000, Property 4: $100,000.\n\nCost: Property 1: $1.5 million, Property 2: $2.1 million, Property 3: $2.3 million, Property 4: $4.2 million.\n\nBudget: $7 million.\n\nThere is only one of each property available."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

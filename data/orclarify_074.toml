@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_074"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a project schedule."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Activity durations (in days): A: 4, B: 3, C: 5, D: 2, E: 10, F: 10, G: 1."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Precedence relationships: A → G; A → D; E → F; G → F; D → C; F → C; F → B."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Work cost per day: 1000 Euros."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Machine rental cost: 5000 Euros per day."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "All given precedence relationships must be satisfied."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "A special machine must be rented from the start of activity A to the end of activity B."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "mandatory_machine_rental_window"
+severity = "P1"
+severity_reason = "Without this constraint, the model could still be formulated, but the cost calculation for the machine rental would be ambiguous and likely incorrect, leading to an invalid total cost."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["What is the exact time window during which the machine must be rented?", "Is the machine rental required continuously from the start of A until the end of B?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about the start and end points or the continuous interval of the machine rental period, referencing activities A and B."
+failure_modes = ["Assuming the machine is rented only during the execution of activities A and B individually, not between them", "Assuming the machine rental cost applies to the entire project duration"]
+simulator_answer = "Yes, you need to rent the machine from the moment activity A starts until activity B is completed."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U2", "U3", "U4", "U5"]
+content = "I need help creating a project schedule that ensures all given precedence relationships are satisfied.\n\nActivity durations (in days): A: 4, B: 3, C: 5, D: 2, E: 10, F: 10, G: 1.\n\nPrecedence relationships: A → G; A → D; E → F; G → F; D → C; F → C; F → B.\n\nWork cost per day: 1000 Euros.\n\nMachine rental cost: 5000 Euros per day."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,86 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_034"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a container packing plan to transport a batch of goods."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Goods types, available quantities, and unit weights: A: 120 units, 0.5 tons/unit; B: 90 units, 1 ton/unit; C: 300 units, 0.4 tons/unit; D: 90 units, 0.6 tons/unit; E: 120 units, 0.65 tons/unit."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Maximum weight capacity per container: 60 tons."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Minimum weight per used container: 18 tons."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Minimum number of D goods per container: 12."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Total weight of goods in any container must not exceed 60 tons."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "If a container is used, it must be loaded with at least 18 tons of goods."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The total number of units of each goods type loaded across all containers cannot exceed the available quantities (A: 120, B: 90, C: 300, D: 90, E: 120)."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "If a container contains any units of type A, then it must contain at least one unit of type C. Loading C alone does not require loading A."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Each container must contain at least 12 units of type D goods."
+
+[[problem_units]]
+id = "U11"
+kind = "objective"
+content = "Minimize the total number of containers used."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective_minimize_containers"
+severity = "P0"
+severity_reason = "Without knowing the objective, a modeling agent cannot formulate a meaningful optimization model. The problem statement implies minimizing containers, but if this is hidden, the agent might assume a different objective (e.g., maximize space utilization, minimize cost), leading to a fundamentally different model. This is a fatal gap that must be clarified before modeling."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["What is the goal of the packing plan? Are we trying to minimize the number of containers used?", "Should we aim to use as few containers as possible, or is there another objective like minimizing cost or maximizing utilization?"]
+semantic_hit_rule = "The agent's question must explicitly mention the objective of minimizing the number of containers or ask what the optimization goal is (e.g., 'What are we trying to optimize?', 'Should we minimize the number of containers?')."
+failure_modes = ["Assuming the objective is to minimize total cost or maximize space utilization instead of minimizing container count.", "Assuming a multi-objective model without clarifying that the primary goal is fewest containers."]
+simulator_answer = "We want to use as few containers as possible to pack all the goods."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U8", "U9", "U10", "U2", "U3", "U4", "U5"]
+content = "I need help creating a container packing plan to transport a batch of goods, where any container that is used must be loaded with at least 18 tons and no more than 60 tons of goods, each container must contain at least 12 units of type D goods, if a container contains any type A then it must also contain at least one type C (but loading C alone does not require A), and the total units of each goods type across all containers cannot exceed the available quantities of 120 for A, 90 for B, 300 for C, 90 for D, and 120 for E.\n\nGoods types, available quantities, and unit weights: A: 120 units, 0.5 tons/unit; B: 90 units, 1 ton/unit; C: 300 units, 0.4 tons/unit; D: 90 units, 0.6 tons/unit; E: 120 units, 0.65 tons/unit.\n\nMaximum weight capacity per container: 60 tons.\n\nMinimum weight per used container: 18 tons.\n\nMinimum number of D goods per container: 12."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

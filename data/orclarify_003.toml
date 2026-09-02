@@ -1,0 +1,146 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_003"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production and human resources plan for a six-month period (January to June) for a foldable tables company."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Initial workforce at the start of January: 1,000 employees."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Initial inventory at the start of January: 15,000 units."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Sales price: 300 Yuan per unit sold."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Raw material cost: 90 Yuan per unit, applicable only to units produced in-house."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Outsourcing cost: 200 Yuan per unit for finished tables (all-inclusive)."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Inventory holding cost: 15 Yuan per unit for inventory held at the end of a month."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Backorder cost: 35 Yuan per unit for unfulfilled demand carried over to the next month."
+
+[[problem_units]]
+id = "U9"
+kind = "data"
+content = "Labor requirement: each in-house unit requires 5 labor hours to produce."
+
+[[problem_units]]
+id = "U10"
+kind = "data"
+content = "Each worker provides 160 regular working hours per month."
+
+[[problem_units]]
+id = "U11"
+kind = "data"
+content = "Regular wage rate: 30 Yuan per hour for the 160 regular hours per worker, paid regardless of utilization."
+
+[[problem_units]]
+id = "U12"
+kind = "data"
+content = "Overtime wage rate: 40 Yuan per hour."
+
+[[problem_units]]
+id = "U13"
+kind = "data"
+content = "Maximum overtime hours per worker per month: 20 hours."
+
+[[problem_units]]
+id = "U14"
+kind = "data"
+content = "Hiring cost per new worker: 5,000 Yuan."
+
+[[problem_units]]
+id = "U15"
+kind = "data"
+content = "Firing cost per worker: 8,000 Yuan."
+
+[[problem_units]]
+id = "U16"
+kind = "data"
+content = "Demand forecast (in units):\n| Month | January | February | March | April | May | June |\n|:---:|:---:|:---:|:---:|:---:|:---:|:---:|\n| Demand | 20,000 | 40,000 | 42,000 | 35,000 | 19,000 | 18,500 |"
+
+[[problem_units]]
+id = "U17"
+kind = "data"
+content = "Minimum ending inventory requirement: 10,000 units."
+
+[[problem_units]]
+id = "U18"
+kind = "objective"
+content = "Maximize total net profit."
+
+[[problem_units]]
+id = "U19"
+kind = "constraint"
+content = "Unfulfilled demand from one month is back-ordered and must be met in subsequent months."
+
+[[problem_units]]
+id = "U20"
+kind = "constraint"
+content = "Orders (current demand and backorders) are fulfilled using available inventory from the previous month, current in-house production, and outsourced units."
+
+[[problem_units]]
+id = "U21"
+kind = "constraint"
+content = "Total overtime hours per month for the entire workforce cannot exceed 20 hours per worker."
+
+[[problem_units]]
+id = "U22"
+kind = "constraint"
+content = "The ending inventory at the end of June must be at least 10,000 units."
+
+[[problem_units]]
+id = "U23"
+kind = "constraint"
+content = "All backorders must be cleared by the end of June (ending backorders must be zero)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "ending_backorders_zero"
+severity = "P1"
+severity_reason = "Without this terminal condition, the agent could model a scenario where backorders persist indefinitely beyond the planning horizon, resulting in a materially different (and likely invalid) profit-maximizing plan that does not force demand satisfaction."
+problem_unit_id = "U23"
+reference_acceptable_questions = ["At the end of June, do we need to clear all backorders so that nothing is left pending?", "Is there a requirement that all customer demand must eventually be met by the end of the six‑month period, with no backorders carried forward afterward?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about a terminal condition on backorders, such as whether they must be zero at the end of June or whether all demand must be fulfilled by the end of the planning horizon."
+failure_modes = ["Silently assuming backorders can be carried forward indefinitely beyond the planning horizon", "Assuming no end-of-horizon constraint on backorders, leading to a model that may leave some demand permanently unmet"]
+simulator_answer = "Yes, we require that all backorders be cleared by the end of June. That means no outstanding customer orders can remain after June; everything must be fulfilled within the six months."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U18", "U19", "U20", "U21", "U22", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9", "U10", "U11", "U12", "U13", "U14", "U15", "U16", "U17"]
+content = "I need help creating a production and human resources plan for a six-month period (January to June) for a foldable tables company, with the objective of maximizing total net profit. Unfulfilled demand from one month is back-ordered and must be met in subsequent months, and orders (current demand and backorders) are fulfilled using available inventory from the previous month, current in-house production, and outsourced units. Total overtime hours per month for the entire workforce cannot exceed 20 hours per worker, and the ending inventory at the end of June must be at least 10,000 units.\n\nInitial workforce at the start of January: 1,000 employees.\n\nInitial inventory at the start of January: 15,000 units.\n\nSales price: 300 Yuan per unit sold.\n\nRaw material cost: 90 Yuan per unit, applicable only to units produced in-house.\n\nOutsourcing cost: 200 Yuan per unit for finished tables (all-inclusive).\n\nInventory holding cost: 15 Yuan per unit for inventory held at the end of a month.\n\nBackorder cost: 35 Yuan per unit for unfulfilled demand carried over to the next month.\n\nLabor requirement: each in-house unit requires 5 labor hours to produce.\n\nEach worker provides 160 regular working hours per month.\n\nRegular wage rate: 30 Yuan per hour for the 160 regular hours per worker, paid regardless of utilization.\n\nOvertime wage rate: 40 Yuan per hour.\n\nMaximum overtime hours per worker per month: 20 hours.\n\nHiring cost per new worker: 5,000 Yuan.\n\nFiring cost per worker: 8,000 Yuan.\n\nDemand forecast (in units):\n| Month | January | February | March | April | May | June |\n|:---:|:---:|:---:|:---:|:---:|:---:|:---:|\n| Demand | 20,000 | 40,000 | 42,000 | 35,000 | 19,000 | 18,500 |\n\nMinimum ending inventory requirement: 10,000 units."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

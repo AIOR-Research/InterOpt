@@ -1,0 +1,130 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_055"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning a course selection for a master's student in Operations Research."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Courses and their category memberships:\n- Calculus: Mathematics\n- Operations Research: Operations Research, Mathematics\n- Data Structures: Computer Science, Mathematics\n- Management Statistics: Mathematics, Operations Research\n- Computer Simulation: Computer Science, Operations Research\n- Computer Programming: Computer Science\n- Forecasting: Operations Research, Mathematics"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Minimize the total number of courses selected."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "At least two courses must be selected that satisfy the Mathematics requirement."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "At least two courses must be selected that satisfy the Operations Research requirement."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "At least two courses must be selected that satisfy the Computer Science requirement."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "A single course that belongs to multiple categories can simultaneously fulfill the requirement of all those categories."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Taking Computer Simulation requires taking Computer Programming."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Taking Data Structures requires taking Computer Programming."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Taking Management Statistics requires taking Calculus."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "Taking Forecasting requires taking Management Statistics."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unknown_objective_minimize_courses"
+severity = "P0"
+severity_reason = "Without an explicit objective, the optimization problem is ill‑defined; the agent cannot know what to optimize and may assume a different or even opposite goal, making any model meaningless."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["What are we trying to achieve? Minimize the number of courses?", "Is the goal to find the smallest possible set of courses that meets the requirements?"]
+semantic_hit_rule = "The agent's question must ask about the optimization goal being to minimize the total number of courses selected."
+failure_modes = ["Assuming the goal is simply to find any feasible course selection", "Assuming we want to maximize something else like course variety or credit hours"]
+simulator_answer = "The goal is to minimize the total number of courses the student has to take while still meeting all the category and prerequisite requirements."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "unknown_mathematics_course_count"
+severity = "P1"
+severity_reason = "The exact number of required mathematics courses (at least two) is a critical parameter; without it the feasible region is incorrectly defined and the optimal course set will almost certainly be wrong."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["How many mathematics courses does the student need to take?", "Is there a minimum number of math courses that must be included?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the required number or minimum number of courses that satisfy the Mathematics requirement."
+failure_modes = ["Assuming only one mathematics course is needed", "Assuming the requirement is exactly two, not at least two, or any other arbitrary number"]
+simulator_answer = "The student needs to take at least two courses that count toward the Mathematics requirement."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "unknown_operations_research_course_count"
+severity = "P1"
+severity_reason = "The exact number of required operations research courses (at least two) is essential to define the feasible set; omitting it leads to an incorrect model and suboptimal selection."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["How many operations research courses are required?", "Do we need at least two courses that satisfy the OR requirement?"]
+semantic_hit_rule = "The agent's question must specifically ask about the required number of courses for the Operations Research category."
+failure_modes = ["Assuming one OR course is sufficient", "Assuming the OR requirement is optional or can be satisfied with fewer courses"]
+simulator_answer = "The student must take at least two courses that meet the Operations Research requirement."
+
+[[hidden_slots]]
+slot_id = "H4"
+name = "unknown_prerequisite_management_statistics"
+severity = "P1"
+severity_reason = "The prerequisite constraint linking Management Statistics to Calculus is a structural rule; ignoring it allows infeasible schedules and makes the resulting model invalid for the real academic programme."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Does Management Statistics have any prerequisite courses?", "Can the student take Management Statistics without having taken Calculus?"]
+semantic_hit_rule = "The agent's question must inquire about whether Management Statistics has a prerequisite and/or explicitly mention Calculus as a requirement."
+failure_modes = ["Assuming Management Statistics has no prerequisites", "Assuming Calculus is optional or not required before Management Statistics"]
+simulator_answer = "If the student takes Management Statistics, they must also take Calculus."
+
+[[hidden_slots]]
+slot_id = "H5"
+name = "unknown_prerequisite_forecasting"
+severity = "P1"
+severity_reason = "The Forecasting prerequisite (Management Statistics) is necessary to correctly define feasibility; omitting it can lead to a course plan that violates the real enrolment rules."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Does Forecasting depend on any other course?", "Is Management Statistics a prerequisite for Forecasting?"]
+semantic_hit_rule = "The agent's question must ask about prerequisites for Forecasting and/or mention that Management Statistics is needed before Forecasting."
+failure_modes = ["Assuming Forecasting can be taken independently", "Assuming only Calculus is a prerequisite for Forecasting"]
+simulator_answer = "Forecasting can only be taken if Management Statistics is also taken."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U8", "U9", "U2"]
+content = "I need help planning a course selection for a master's student in Operations Research, where at least two courses must be selected that satisfy the Computer Science requirement, and a single course that belongs to multiple categories can simultaneously fulfill the requirement of all those categories. Additionally, taking Computer Simulation requires taking Computer Programming, and taking Data Structures requires taking Computer Programming.\n\nCourses and their category memberships:\n- Calculus: Mathematics\n- Operations Research: Operations Research, Mathematics\n- Data Structures: Computer Science, Mathematics\n- Management Statistics: Mathematics, Operations Research\n- Computer Simulation: Computer Science, Operations Research\n- Computer Programming: Computer Science\n- Forecasting: Operations Research, Mathematics"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

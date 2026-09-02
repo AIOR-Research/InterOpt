@@ -1,0 +1,56 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_052"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a staffing plan for a 24-hour bus service."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Required number of drivers and crew members per time period:\n| Shift | Time | Required number |\n|-------|------|-----------------|\n| 1 | 6:00 ~ 10:00 | 60 |\n| 2 | 10:00 ~ 14:00 | 70 |\n| 3 | 14:00 ~ 18:00 | 60 |\n| 4 | 18:00 ~ 22:00 | 50 |\n| 5 | 22:00 ~ 2:00 | 20 |\n| 6 | 2:00 ~ 6:00 | 30 |"
+
+[[problem_units]]
+id = "U3"
+kind = "assumption"
+content = "Drivers and crew members start their shifts at the beginning of each time period and work continuously for 8 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize the total number of drivers and crew members needed."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "During each time period, the number of drivers and crew members on duty must be at least the required number specified in the table."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "eight_hour_shift_start_rule"
+severity = "P0"
+severity_reason = "Without knowing shift duration and start times, the decision variables and constraints that link staffing across periods are undefined, making the problem ill-posed and impossible to model responsibly."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["How long are the shifts, and when do they begin?", "Do all drivers work exactly 8-hour shifts starting at the beginning of each time period?"]
+semantic_hit_rule = "The agent must ask about the length of a shift and/or when shifts begin, or explicitly inquire about the work pattern described as 8-hour continuous shifts starting at the period boundaries."
+failure_modes = ["Assuming shift lengths are flexible or unconstrained", "Assuming drivers can start work at any time within a period, not necessarily at the period start", "Assuming shift duration is not explicitly 8 hours continuous"]
+simulator_answer = "Drivers and crew members start at the beginning of each time period and work an 8-hour continuous shift."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U5", "U2"]
+content = "I need help creating a staffing plan for a 24-hour bus service, where the objective is to minimize the total number of drivers and crew members needed, and during each time period, the number of drivers and crew members on duty must be at least the required number specified in the table.\n\nRequired number of drivers and crew members per time period:\n| Shift | Time | Required number |\n|-------|------|-----------------|\n| 1 | 6:00 ~ 10:00 | 60 |\n| 2 | 10:00 ~ 14:00 | 70 |\n| 3 | 14:00 ~ 18:00 | 60 |\n| 4 | 18:00 ~ 22:00 | 50 |\n| 5 | 22:00 ~ 2:00 | 20 |\n| 6 | 2:00 ~ 6:00 | 30 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

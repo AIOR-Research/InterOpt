@@ -1,0 +1,112 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_044"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a transportation plan for shipping material from production points to demand points via intermediate marshaling stations."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Number of production points: m=2; number of demand points: n=2; number of intermediate marshaling stations: p=2."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Production output at each production point i: a1=100, a2=150."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Demand at each demand point j: b1=80, b2=120."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Fixed cost for using intermediate marshaling station k: f1=10, f2=15."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Maximum transshipment capacity of intermediate marshaling station k: q1=100, q2=100."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Unit transportation cost from production point i to marshaling station k, c_ik: \n| i\\k | 1 | 2 |\n|-----|---|---|\n| 1   | 2 | 3 |\n| 2   | 4 | 1 |"
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Unit transportation cost from marshaling station k to demand point j, c'_kj: \n| k\\j | 1 | 2 |\n|-----|---|---|\n| 1   | 3 | 2 |\n| 2   | 1 | 4 |"
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "All shipments from production points to demand points must pass through one of the intermediate marshaling stations."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The total quantity of material shipped from each production point i must not exceed its output a_i."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "The total quantity of material shipped to each demand point j must equal its demand b_j."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "The total quantity of material transshipped through each intermediate marshaling station k must not exceed its maximum capacity q_k."
+
+[[problem_units]]
+id = "U13"
+kind = "assumption"
+content = "The total production output is at least the total demand, i.e., ∑ a_i ≥ ∑ b_j."
+
+[[problem_units]]
+id = "U14"
+kind = "objective"
+content = "Minimize the total cost."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "demand_satisfaction"
+severity = "P0"
+severity_reason = "Without this constraint the agent could formulate a model that allows partial deliveries to demand points, which would be a fundamentally different and invalid transportation problem. The problem requires exact fulfillment of each demand, and omitting it would make the model incorrect."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Do we need to deliver exactly the full demand quantity to each demand point, or is it acceptable to ship less than the demand?", "Is it required that the amount shipped to demand point j equals its demand b_j, or can we have unmet demand?"]
+semantic_hit_rule = "The agent's question must explicitly ask whether the shipped quantity to each demand point must equal its exact demand or if some tolerance/partial fulfillment is allowed."
+failure_modes = ["Silently assuming that any amount can be shipped to each demand point as long as total shipped does not exceed production, leading to a model that completely omits demand equality constraints.", "Incorrectly assuming that unmet demand incurs no penalty and that shipping less is allowed, which could produce trivial or near-zero-cost solutions."]
+simulator_answer = "Yes, the plan needs to deliver the full amount to each demand point. They’ve ordered exactly those quantities, so we have to satisfy the demand exactly."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "minimize_total_cost"
+severity = "P0"
+severity_reason = "The optimization problem is ill‑posed without a stated objective. The agent cannot formulate a meaningful model unless it knows to minimize total cost; otherwise any feasible plan would be acceptable, which is not the intended problem."
+problem_unit_id = "U14"
+reference_acceptable_questions = ["What is the objective we are trying to optimize? Is it to minimize total cost?", "Are we aiming to minimize the sum of transportation costs and fixed station costs, i.e., the overall total cost?"]
+semantic_hit_rule = "The agent's question must ask about the optimization goal — specifically that the objective is to minimize total cost, which includes both variable transportation costs and the fixed costs for using marshaling stations."
+failure_modes = ["Assuming a different objective, such as minimizing only variable transportation cost and ignoring fixed station costs, producing a plan that uses stations suboptimally.", "Assuming no optimization at all and simply trying to find any feasible shipment plan, missing the cost-minimization intent."]
+simulator_answer = "The goal is to keep the overall costs as low as possible. That means we want to minimize the total cost, which includes both the shipping costs per unit and any fixed fees for using the marshaling stations."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U9", "U10", "U12", "U13", "U2", "U3", "U4", "U5", "U6", "U7", "U8"]
+content = "I need help creating a transportation plan for shipping material from production points to demand points via intermediate marshaling stations, where all shipments must pass through one of these stations. The total quantity shipped from each production point i must not exceed its output a_i, and the total quantity transshipped through each intermediate marshaling station k must not exceed its maximum capacity q_k. It is assumed that total production output is at least total demand (∑ a_i ≥ ∑ b_j).\n\nNumber of production points: m=2; number of demand points: n=2; number of intermediate marshaling stations: p=2.\n\nProduction output at each production point i: a1=100, a2=150.\n\nDemand at each demand point j: b1=80, b2=120.\n\nFixed cost for using intermediate marshaling station k: f1=10, f2=15.\n\nMaximum transshipment capacity of intermediate marshaling station k: q1=100, q2=100.\n\nUnit transportation cost from production point i to marshaling station k, c_ik: \n| i\\k | 1 | 2 |\n|-----|---|---|\n| 1   | 2 | 3 |\n| 2   | 4 | 1 |\n\nUnit transportation cost from marshaling station k to demand point j, c'_kj: \n| k\\j | 1 | 2 |\n|-----|---|---|\n| 1   | 3 | 2 |\n| 2   | 1 | 4 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

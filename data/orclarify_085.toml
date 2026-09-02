@@ -1,0 +1,113 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_085"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning the weekly production of two products, X and Y."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Item | Machine Time (minutes) | Craftsman Time (minutes) |\n| :---: | :---: | :---: |\n| X | 13 | 20 |\n| Y | 19 | 29 |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Machine time available per week: 40 hours. Craftsman time available per week: 35 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Total machine time used per week must not exceed 40 hours."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Total craftsman time used per week must not exceed 35 hours."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Cost of machine time: £10 per hour. Cost of craftsman time: £2 per hour."
+
+[[problem_units]]
+id = "U7"
+kind = "assumption"
+content = "Idle time for machines and craftsmen incurs no cost."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Revenue for product X: £20 per batch. Revenue for product Y: £30 per batch."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "At least 10 batches of product X must be produced each week."
+
+[[problem_units]]
+id = "U10"
+kind = "assumption"
+content = "Production batches may be fractional."
+
+[[problem_units]]
+id = "U11"
+kind = "assumption"
+content = "All produced batches are sold."
+
+[[problem_units]]
+id = "U12"
+kind = "objective"
+content = "Maximize profit."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "idle_time_no_cost"
+severity = "P2"
+severity_reason = "Without this clarification, the agent might incorrectly assume idle time incurs a cost, adding an unnecessary term to the objective or overcomplicating the model. Clarifying that idle time costs nothing keeps the profit calculation simple and correct."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Do we pay for unused machine or craftsman time?", "Is there any cost for idle time?"]
+semantic_hit_rule = "The agent's question must inquire about whether idle (unused) time for machines or craftsmen incurs a cost."
+failure_modes = ["Assuming idle time incurs a cost and subtracting it from profit", "Assuming unused capacity is paid for"]
+simulator_answer = "No, idle time for machines and craftsmen doesn't cost anything. You only pay for the time you actually use."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "fractional_batches_allowed"
+severity = "P2"
+severity_reason = "Batch divisibility determines whether the problem is linear or mixed-integer. Without it, the agent might unnecessarily impose integer constraints. The omission still allows a coherent model, but clarifying the allowance of fractional batches ensures a pure LP formulation as intended."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Can we produce fractional batches?", "Do the batch numbers have to be whole numbers?"]
+semantic_hit_rule = "The agent's question must ask about whether the production quantities can be fractional or must be integer."
+failure_modes = ["Assuming batches must be integer, leading to a mixed-integer linear programming model", "Adding integrality constraints unnecessarily"]
+simulator_answer = "Yes, fractional batches are allowed. The weekly plan can involve fractional batches when appropriate."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "all_batches_sold"
+severity = "P2"
+severity_reason = "The assumption that all produced batches are sold directly affects revenue calculation and whether demand constraints exist. Without this, the agent might incorrectly add demand limits or inventory considerations, making the model more complex than intended. Clarifying keeps the model focused on pure production‑profit maximization."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Are all the batches we produce actually sold?", "Is there any limit on how many batches we can sell?"]
+semantic_hit_rule = "The agent's question must ask whether all produced batches are guaranteed to be sold, or if there is a demand constraint."
+failure_modes = ["Assuming a demand cap on product X or Y, thereby adding unnecessary constraints", "Introducing inventory or backorder variables"]
+simulator_answer = "Yes, all batches we produce will be sold. So you can just multiply the number of batches by the revenue per batch."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U5", "U9", "U12", "U2", "U3", "U6", "U8"]
+content = "I need help planning the weekly production of two products, X and Y, to maximize profit. Total machine time used per week must not exceed 40 hours, total craftsman time used per week must not exceed 35 hours, and at least 10 batches of product X must be produced each week.\n\n| Item | Machine Time (minutes) | Craftsman Time (minutes) |\n| :---: | :---: | :---: |\n| X | 13 | 20 |\n| Y | 19 | 29 |\n\nMachine time available per week: 40 hours. Craftsman time available per week: 35 hours.\n\nCost of machine time: £10 per hour. Cost of craftsman time: £2 per hour.\n\nRevenue for product X: £20 per batch. Revenue for product Y: £30 per batch."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

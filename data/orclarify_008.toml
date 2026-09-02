@@ -1,0 +1,72 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_008"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a work assignment plan."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table of hours required by each worker to complete each task:\n\n| Worker | A | B | C | D |\n|--------|---|---|---|---|\n| I      | 9 | 4 | 3 | 7 |\n| II     | 4 | 6 | 5 | 6 |\n| III    | 5 | 4 | 7 | 5 |\n| IV     | 7 | 5 | 2 | 3 |\n| V      | 10| 6 | 7 | 4 |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Total working hours are to be minimized."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Exactly 4 out of the 5 workers must be selected."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Each selected worker is assigned to exactly one of the four tasks."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Each task (A, B, C, D) must be assigned to exactly one worker."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_minimize_hours_objective"
+severity = "P0"
+severity_reason = "Without the objective, the optimization problem is ill‑posed. The agent cannot formulate a meaningful model, because it does not know what criterion to optimize (minimizing total working hours). Missing this makes the entire modelling attempt impossible or almost certainly wrong."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["What is the objective we are trying to optimize?", "Are we minimizing total working hours or something else like cost or makespan?"]
+semantic_hit_rule = "The agent’s question must ask about the performance metric to be optimized, explicitly mentioning minimization of total working time or total hours."
+failure_modes = ["Assumption that total working hours is the objective without confirming.", "Assumption of a different objective such as minimising the maximum completion time or minimising cost.", "Inventing an objective that does not match the intended problem."]
+simulator_answer = "We want to minimize the total working hours."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "worker_at_most_one_task_constraint"
+severity = "P1"
+severity_reason = "Without this constraint, an agent may model a worker handling several tasks simultaneously, leading to a materially different assignment structure (e.g., one worker can be assigned to multiple tasks). The problem would still be coherent but would not reflect the intended business rule that each selected worker is responsible for exactly one task."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Is each worker limited to exactly one task, or can a single worker perform more than one task?", "For the four workers we pick, does each worker get exactly one of the four tasks?"]
+semantic_hit_rule = "The agent’s question must inquire whether a selected worker can be assigned to multiple tasks, or ask for the exact number of tasks each worker may take."
+failure_modes = ["Assuming a worker can be assigned to more than one task (e.g., one worker does two tasks while another does none).", "Assuming at most one task per worker but not verifying the 'exactly one' part, leaving task assignments ambiguous.", "Inventing a flexible capacity per worker that is absent from the original problem."]
+simulator_answer = "Each selected worker is assigned to exactly one of the four tasks."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U6", "U2"]
+content = "I need help creating a work assignment plan where exactly 4 out of the 5 workers must be selected, and each task (A, B, C, D) must be assigned to exactly one worker.\n\nTable of hours required by each worker to complete each task:\n\n| Worker | A | B | C | D |\n|--------|---|---|---|---|\n| I      | 9 | 4 | 3 | 7 |\n| II     | 4 | 6 | 5 | 6 |\n| III    | 5 | 4 | 7 | 5 |\n| IV     | 7 | 5 | 2 | 3 |\n| V      | 10| 6 | 7 | 4 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

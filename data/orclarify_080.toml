@@ -1,0 +1,97 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_080"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a hiring and method selection plan for three tasks that can be done by skilled workers or laborers using different methods."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Task requirements and methods:\n- Task 1 (Requires 8,400 effective hours):\n  - Method A: Completed by skilled workers alone.\n  - Method B: Completed by groups of one skilled worker and two laborers. Fixed weekly setup cost of 500 yuan if chosen.\n- Task 2 (Requires 10,800 effective hours):\n  - Method A: Completed by skilled workers alone.\n  - Method B: Completed by laborers alone.\n- Task 3 (Requires 18,000 effective hours):\n  - Method A: Completed by groups of five laborers.\n  - Method B: Completed by groups of one skilled worker and three laborers."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Weekly wages: skilled workers 100 yuan, laborers 80 yuan. Effective working hours per week: skilled workers 42 hours, laborers 36 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Maximum number of workers: 400 skilled workers, 800 laborers."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Minimum skilled workers for Task 3 Method B: 20."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Exactly one method must be chosen for each task."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "If Task 1 uses Method B, then Task 3 cannot use Method A."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "If Method B is chosen for Task 3, at least 20 skilled workers must be assigned to Task 3."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The number of skilled workers hired cannot exceed 400, and the number of laborers hired cannot exceed 800."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Total number of skilled workers hired cannot exceed 60% of the total number of laborers hired."
+
+[[problem_units]]
+id = "U11"
+kind = "objective"
+content = "Minimize total weekly cost (wages + fixed costs)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "exactly_one_method_per_task"
+severity = "P0"
+severity_reason = "Without this constraint, the decision structure of the problem is undefined — the agent cannot know whether tasks can be split across methods, making the model ill-posed and impossible to formulate correctly."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["Do I have to select exactly one method for each task, or can I split the hours between methods?", "Is it allowed to combine methods for a single task, or must we pick only one per task?"]
+semantic_hit_rule = "The agent's question must explicitly mention the exclusivity or cardinality of method choice per task, asking whether exactly one method is required or if mixing is permitted."
+failure_modes = ["Silent incorrect assumption: assuming that the workload can be split across methods (e.g., using Method A for part of Task 1 and Method B for the rest), leading to a fundamentally different model.", "Silent incorrect assumption: assuming that multiple methods can be selected for the same task without verifying the exclusivity rule."]
+simulator_answer = "You must choose exactly one method for each task. There’s no splitting of hours between methods for a given task."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "objective_minimize_total_cost"
+severity = "P0"
+severity_reason = "The objective is the primary goal of the optimization; hiding it leaves the agent with no target to optimize, making modeling impossible."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["What exactly are we trying to minimize? Is it the total weekly cost, including both wages and the fixed setup cost?", "Is the goal to minimize total cost, or is there another objective like minimizing the number of workers?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the objective function, specifically whether it is to minimize total weekly cost (including wages and fixed costs) or some other metric."
+failure_modes = ["Silent incorrect assumption: assuming the objective is to minimize total cost without confirming, possibly misinterpreting cost components or ignoring the fixed setup fee.", "Silent incorrect assumption: assuming minimization of worker count or some other non-cost metric, leading to an irrelevant model."]
+simulator_answer = "We want to minimize the total weekly cost. That includes both the wages paid to workers and any fixed setup costs, like the 500 yuan team coordination fee if we use Method B for Task 1."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U8", "U9", "U10", "U2", "U3", "U4", "U5"]
+content = "I need help creating a hiring and method selection plan for three tasks that can be done by skilled workers or laborers using different methods. The plan must respect that if Task 1 uses Method B, then Task 3 cannot use Method A, and if Method B is chosen for Task 3, at least 20 skilled workers must be assigned to Task 3. Additionally, the number of skilled workers hired cannot exceed 400, the number of laborers hired cannot exceed 800, and the total number of skilled workers hired cannot exceed 60% of the total number of laborers hired.\n\nTask requirements and methods:\n- Task 1 (Requires 8,400 effective hours):\n  - Method A: Completed by skilled workers alone.\n  - Method B: Completed by groups of one skilled worker and two laborers. Fixed weekly setup cost of 500 yuan if chosen.\n- Task 2 (Requires 10,800 effective hours):\n  - Method A: Completed by skilled workers alone.\n  - Method B: Completed by laborers alone.\n- Task 3 (Requires 18,000 effective hours):\n  - Method A: Completed by groups of five laborers.\n  - Method B: Completed by groups of one skilled worker and three laborers.\n\nWeekly wages: skilled workers 100 yuan, laborers 80 yuan. Effective working hours per week: skilled workers 42 hours, laborers 36 hours.\n\nMaximum number of workers: 400 skilled workers, 800 laborers.\n\nMinimum skilled workers for Task 3 Method B: 20."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

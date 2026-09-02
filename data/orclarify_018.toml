@@ -1,0 +1,112 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_018"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for a textile factory."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "The factory produces two types of fabrics: clothing fabric and curtain fabric."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "The factory operates two shifts."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Weekly production time is 110 hours."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Production rate for both fabrics: 1000 meters per hour."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Minimum weekly sales of curtain fabric: 70,000 meters."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Profit for curtain fabric: 2.5 yuan per meter."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Minimum weekly sales of clothing fabric: 45,000 meters."
+
+[[problem_units]]
+id = "U9"
+kind = "data"
+content = "Profit for clothing fabric: 1.5 yuan per meter."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Weekly production time must fully utilize the 110 hours."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "Overtime should not exceed 10 hours per week."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "At least 70,000 meters of curtain fabric must be sold per week."
+
+[[problem_units]]
+id = "U13"
+kind = "constraint"
+content = "At least 45,000 meters of clothing fabric must be sold per week."
+
+[[problem_units]]
+id = "U14"
+kind = "objective"
+content = "Minimize overtime as much as possible."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unclear_production_time_goal"
+severity = "P0"
+severity_reason = "Without knowing that this is a goal with a specific priority and not a hard equality constraint, the model will incorrectly enforce exactly 110 hours of production time, conflicting with other objectives and missing the preemptive goal-programming structure."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Is the requirement to fully use 110 hours a strict constraint, or a target that can be over-/under‑achieved?", "Should the goal of fully utilizing 110 hours be treated as an objective with a certain priority over the other objectives?"]
+semantic_hit_rule = "The agent's question must ask whether the 110-hours utilization is a hard constraint or a soft goal, and/or inquire about its priority relative to the other listed objectives."
+failure_modes = ["Assuming that weekly production time must equal exactly 110 hours as a rigid constraint.", "Assuming that fully utilizing 110 hours has higher priority than the overtime-related goals without asking."]
+simulator_answer = "We aim to fully use the 110 hours of regular production time each week – that's our target."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "unclear_overtime_limit_goal"
+severity = "P0"
+severity_reason = "Without clarification, the agent may treat the overtime limit as a hard constraint instead of a prioritized goal, leading to a model that cannot correctly trade off overtime against other objectives and misrepresents the real problem structure."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Is the 10-hour overtime limit a strict upper bound, or is it another goal that we try to meet as closely as possible?", "What is the priority of keeping overtime under 10 hours compared to the other objectives like minimizing overtime?"]
+semantic_hit_rule = "The agent's question must ask about the nature of the 10-hour overtime rule (strict constraint vs. soft target) and/or its priority in the overall objective hierarchy."
+failure_modes = ["Assuming the 10-hour overtime limit is a rigid constraint that cannot be violated under any circumstances.", "Assuming the overtime limit has equal weight to minimizing overtime without inquiring about preemptive priorities."]
+simulator_answer = "We want to keep overtime under 10 hours a week if possible – that's one of our objectives."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U12", "U13", "U14", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9"]
+content = "I need help creating a production plan for a textile factory where at least 70,000 meters of curtain fabric and 45,000 meters of clothing fabric must be sold per week, while minimizing overtime as much as possible.\n\nThe factory produces two types of fabrics: clothing fabric and curtain fabric.\n\nThe factory operates two shifts.\n\nWeekly production time is 110 hours.\n\nProduction rate for both fabrics: 1000 meters per hour.\n\nMinimum weekly sales of curtain fabric: 70,000 meters.\n\nProfit for curtain fabric: 2.5 yuan per meter.\n\nMinimum weekly sales of clothing fabric: 45,000 meters.\n\nProfit for clothing fabric: 1.5 yuan per meter."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

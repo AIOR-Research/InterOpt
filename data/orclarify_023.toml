@@ -1,0 +1,76 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_023"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a weekly production plan for Hongdou Clothing Factory. The factory uses three special equipment to produce shirts, short-sleeved shirts, and casual clothes."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Product Name | Labor per unit | Material per unit | Selling Price | Variable Cost |\n|--------------|----------------|------------------|---------------|---------------|\n| Shirt        | 3              | 4                | 120           | 60            |\n| Short-sleeve | 2              | 3                | 80            | 40            |\n| Casual Cloth | 6              | 6                | 180           | 80            |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Available labor per week: 1500 units."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Available material per week: 1600 units."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Weekly fixed costs: shirt equipment 2000, short-sleeved shirt equipment 1500, casual clothes equipment 1000."
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Maximize weekly profit."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Each special equipment is dedicated to producing only one specific product type: the first produces shirts, the second produces short-sleeved shirts, the third produces casual clothes."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Total labor used per week must not exceed the available 1500 units."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Total material used per week must not exceed the available 1600 units."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective_profit"
+severity = "P0"
+severity_reason = "Without knowing the objective, the modeling agent cannot define a meaningful optimization function; any production plan would be arbitrary and potentially misaligned with the factory's goals."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["What is the goal of the production plan?", "Could you clarify whether we should maximize profit, revenue, or something else?"]
+semantic_hit_rule = "The agent must ask about the optimization goal or objective function, specifically whether the objective is to maximize profit or another metric."
+failure_modes = ["Silent incorrect assumption: assuming the objective is to maximize revenue.", "Silent incorrect assumption: trying to minimize total cost without maximizing profit."]
+simulator_answer = "We want to maximize our weekly profit."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U8", "U9", "U2", "U3", "U4", "U5"]
+content = "I need help creating a weekly production plan for Hongdou Clothing Factory. The factory uses three special equipment to produce shirts, short-sleeved shirts, and casual clothes, and each special equipment is dedicated to producing only one specific product type: the first produces shirts, the second produces short-sleeved shirts, the third produces casual clothes. Total labor used per week must not exceed the available 1500 units, and total material used per week must not exceed the available 1600 units.\n\n| Product Name | Labor per unit | Material per unit | Selling Price | Variable Cost |\n|--------------|----------------|------------------|---------------|---------------|\n| Shirt        | 3              | 4                | 120           | 60            |\n| Short-sleeve | 2              | 3                | 80            | 40            |\n| Casual Cloth | 6              | 6                | 180           | 80            |\n\nAvailable labor per week: 1500 units.\n\nAvailable material per week: 1600 units.\n\nWeekly fixed costs: shirt equipment 2000, short-sleeved shirt equipment 1500, casual clothes equipment 1000."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

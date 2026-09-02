@@ -1,0 +1,97 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_029"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a personnel arrangement plan for Jieli Company to assign recruited professionals to branches in Donghai City and Nanjiang City."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table 4-3\n| Branch Location | Specialty | Demand |\n|-----------------|-----------|--------|\n| Donghai City    | 1         | 1000   |\n| Donghai City    | 2         | 2000   |\n| Donghai City    | 3         | 1500   |\n| Nanjiang City   | 1         | 2000   |\n| Nanjiang City   | 2         | 1000   |\n| Nanjiang City   | 3         | 1000   |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Table 4-4\n\n| Type | Number of People | Suitable Specialty | Preferred Specialty | Preferred City |\n|------|------------------|--------------------|---------------------|----------------|\n| 1    | 1500             | 1,2                | 1                   | Donghai        |\n| 2    | 1500             | 2,3                | 2                   | Donghai        |\n| 3    | 1500             | 1,3                | 1                   | Nanjiang       |\n| 4    | 1500             | 1,3                | 3                   | Nanjiang       |\n| 5    | 1500             | 2,3                | 3                   | Donghai        |\n| 6    | 1500             | 3                  | 3                   | Nanjiang       |"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "The target number for each of the preferred-specialty and preferred-city goals is 8000 recruited personnel."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The number of professionals assigned to each specialty at each branch must exactly equal the demand given in Table 4-3 (p1)."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "A person can only be assigned to a specialty that is listed in their suitable specialty set according to Table 4-4."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The total number of people assigned from each type cannot exceed the available number of that type as listed in Table 4-4."
+
+[[problem_units]]
+id = "U8"
+kind = "objective"
+content = "Achieve that 8000 recruited personnel meet their preferred specialty."
+
+[[problem_units]]
+id = "U9"
+kind = "objective"
+content = "Achieve that 8000 recruited personnel meet their preferred city."
+
+[[problem_units]]
+id = "U10"
+kind = "objective"
+content = "Determine the minimum number of recruited personnel who cannot be assigned to their preferred city."
+
+[[problem_units]]
+id = "U11"
+kind = "assumption"
+content = "The company considers the three priorities in the order p1, p2, p3, with p1 being the highest priority and p3 the lowest."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "exact_demand_equality"
+severity = "P1"
+severity_reason = "Without knowing that the demand must be met exactly (not just a lower bound), the model would use inequality constraints, changing the feasible set and the degree to which p2 and p3 can be achieved. This leads to a materially different solution than the intended problem."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["For the demand requirement p1, does that mean we must assign exactly the number in Table 4‑3 to each specialty and branch, or is it acceptable to assign more than the demand if needed?", "Is p1 an exact equality constraint, or is it a minimum to be met (i.e., at least the demand)?"]
+semantic_hit_rule = "The agent's question must ask whether the demand fulfillment condition for p1 is an exact equality (assign exactly the demand numbers) or a lower bound (at least the demand)."
+failure_modes = ["Agent silently assumes the demand is a lower bound (>=) and allows over‑assignment, which changes the feasible set and the optimal achievement of p2/p3."]
+simulator_answer = "For p1, we need to fully meet the demand, meaning exactly the numbers shown in Table 4‑3. No more, no less."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "priority_order_lexicographic"
+severity = "P0"
+severity_reason = "The entire multi‑objective formulation depends on the priority structure. Without knowing that the priorities are lexicographic (p1 before p2 before p3), a modeling agent cannot correctly specify the goal programming model. The problem would be ill‑posed."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["How are the priorities structured? Is it a strict lexicographic order where p1 must be satisfied first, then p2, and finally p3?", "Are we using preemptive goal programming, meaning we first fully satisfy p1, then try to achieve p2 as much as possible, and only after that try to achieve p3?"]
+semantic_hit_rule = "The agent's question must explicitly ask whether the priorities follow a lexicographic (preemptive) order, with p1 highest and p3 lowest, and that the goals are solved in that sequence."
+failure_modes = ["Agent treats all three goals as equally weighted and uses a weighted‑sum objective, ignoring the preemptive priority structure.", "Agent assumes the three goals can be traded off simultaneously without a strict order, leading to a fundamentally different model."]
+simulator_answer = "Yes, the priorities are in strict order: p1 is the highest priority, p2 is second, and p3 is the lowest. So we first make sure all demand is fully met, then try to get 8000 people into their preferred specialty, and finally, after that, we aim for 8000 people in their preferred city."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U8", "U9", "U10", "U2", "U3", "U4"]
+content = "I need help creating a personnel arrangement plan for Jieli Company to assign recruited professionals to branches in Donghai City and Nanjiang City, where a person can only be assigned to a specialty that is listed in their suitable specialty set according to Table 4-4, and the total number of people assigned from each type cannot exceed the available number of that type as listed in Table 4-4. The objectives are to have 8000 recruited personnel meet their preferred specialty, have 8000 meet their preferred city, and determine the minimum number of recruited personnel who cannot be assigned to their preferred city.\n\nTable 4-3\n| Branch Location | Specialty | Demand |\n|-----------------|-----------|--------|\n| Donghai City    | 1         | 1000   |\n| Donghai City    | 2         | 2000   |\n| Donghai City    | 3         | 1500   |\n| Nanjiang City   | 1         | 2000   |\n| Nanjiang City   | 2         | 1000   |\n| Nanjiang City   | 3         | 1000   |\n\nTable 4-4\n\n| Type | Number of People | Suitable Specialty | Preferred Specialty | Preferred City |\n|------|------------------|--------------------|---------------------|----------------|\n| 1    | 1500             | 1,2                | 1                   | Donghai        |\n| 2    | 1500             | 2,3                | 2                   | Donghai        |\n| 3    | 1500             | 1,3                | 1                   | Nanjiang       |\n| 4    | 1500             | 1,3                | 3                   | Nanjiang       |\n| 5    | 1500             | 2,3                | 3                   | Donghai        |\n| 6    | 1500             | 3                  | 3                   | Nanjiang       |\n\nThe target number for each of the preferred-specialty and preferred-city goals is 8000 recruited personnel."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

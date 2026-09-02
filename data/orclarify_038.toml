@@ -1,0 +1,77 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_038"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help arranging a processing schedule for products on machine tools."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "There are three different products to be processed on three machine tools."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "t_ij represents the time to process the i-th product on the j-th machine."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "| Product | Machine 1 | Machine 2 | Machine 3 |\n|---------|-----------|-----------|-----------|\n| Product 1 | 2 | 3 | 1 |\n| Product 2 | 4 | 2 | 3 |\n| Product 3 | 3 | 5 | 2 |"
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Each product must first be processed on machine 1, then sequentially on machines 2 and 3."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The order of processing the three products on each machine should remain the same."
+
+[[problem_units]]
+id = "U7"
+kind = "objective"
+content = "Minimize the total processing cycle for the three products."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "sequential_machine_order_constraint"
+severity = "P0"
+severity_reason = "Without this constraint, the machine processing sequence is undefined, making it impossible to formulate precedence constraints for the flow shop scheduling problem."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Is there a required order in which each product goes through the machines?", "Do all products have to follow the same machine sequence, like 1→2→3?"]
+semantic_hit_rule = "The agent's question must ask about the machine processing order or ask whether the products follow a fixed sequence across machines."
+failure_modes = ["Assuming each product can visit machines in any order", "Assuming each product must first go to machine 1 but no constraint on subsequent machines"]
+simulator_answer = "Each product must go to machine 1 first, then machine 2, and finally machine 3."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "minimize_total_processing_cycle"
+severity = "P0"
+severity_reason = "The objective function is missing; without it, the model cannot decide on an optimal schedule. 'Total processing cycle' could refer to makespan or another metric, requiring explicit clarification."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Could you clarify what you mean by 'total processing cycle'? Is it the time when the last product finishes?", "What is the exact objective—minimize the makespan or something else?"]
+semantic_hit_rule = "The agent's question must ask for clarification of the term 'total processing cycle' or explicitly ask if it means makespan."
+failure_modes = ["Assuming total processing cycle is the makespan (max completion time) without confirmation", "Assuming it is the sum of completion times"]
+simulator_answer = "The objective is to minimize the total processing cycle for the three products."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U2", "U3", "U4"]
+content = "I need help arranging a processing schedule for three products on machine tools, and the order of processing the three products on each machine should remain the same.\n\nThere are three different products to be processed on three machine tools.\n\nt_ij represents the time to process the i-th product on the j-th machine.\n\n| Product | Machine 1 | Machine 2 | Machine 3 |\n|---------|-----------|-----------|-----------|\n| Product 1 | 2 | 3 | 1 |\n| Product 2 | 4 | 2 | 3 |\n| Product 3 | 3 | 5 | 2 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,72 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_057"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a cutting plan for paper rolls to fulfill orders."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table 1.2\n| Order Number | Width (meters) | Length (meters) |\n| :---: | :---: | :---: |\n| 1 | 0.5 | 1000 |\n| 2 | 0.7 | 3000 |\n| 3 | 0.9 | 2000 |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Standard roll widths available: 1 meter and 2 meters."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize the area of waste."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The three orders must be fulfilled according to their width and length requirements."
+
+[[problem_units]]
+id = "U6"
+kind = "assumption"
+content = "The length of the rolls is unlimited and can be spliced to reach the required length."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "objective_minimizes_waste_area"
+severity = "P0"
+severity_reason = "Without the objective, the modeling agent cannot define what to optimize. The problem becomes an ill‐posed feasibility task rather than an optimization problem; any cutting plan that meets constraints would be considered acceptable."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What is our goal? Should we minimize the total amount of waste material?", "Are we aiming to minimize the area of leftover paper after cutting all the orders?"]
+semantic_hit_rule = "The agent’s question must ask about the optimization objective, specifically inquiring whether we want to minimize waste area or scrap material."
+failure_modes = ["Silent assumption that the objective is to minimize the number of cuts or the number of rolls used", "Assuming the goal is to use the minimum number of standard rolls without focusing on waste area"]
+simulator_answer = "We want to minimize the total area of waste generated while cutting the rolls to fulfill the orders. So the cutting plan should produce the least possible scrap paper overall."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "strict_demand_fulfillment"
+severity = "P1"
+severity_reason = "Without confirming the exactness of demand fulfillment, the agent may model an incorrect constraint, such as allowing overproduction that is counted as waste, which changes the feasible set and the resulting optimization."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Do we need to produce exactly the ordered lengths and widths, or can we overproduce some widths and treat the extra as waste?", "Is it allowed to create more paper of a certain width than the order asks for?"]
+semantic_hit_rule = "The agent’s question asks whether the order quantities are strict, or questions the possibility of overproduction or partial fulfilment."
+failure_modes = ["Assuming overproduction is allowed and the extra material is simply counted as waste", "Assuming the orders can be partially fulfilled as long as the total paper used is minimized"]
+simulator_answer = "We must deliver exactly the ordered lengths and widths. No extra can be produced for an order, and we cannot fall short. The cutting plan has to match each order’s total area precisely."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U2", "U3"]
+content = "I need help creating a cutting plan for paper rolls to fulfill orders, where the length of the rolls is unlimited and can be spliced to reach the required length.\n\nTable 1.2\n| Order Number | Width (meters) | Length (meters) |\n| :---: | :---: | :---: |\n| 1 | 0.5 | 1000 |\n| 2 | 0.7 | 3000 |\n| 3 | 0.9 | 2000 |\n\nStandard roll widths available: 1 meter and 2 meters."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

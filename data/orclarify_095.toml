@@ -1,0 +1,77 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_095"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for a beverage factory over a four-week horizon."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Week | Demand (1000 boxes) | Production Capacity (1000 boxes) | Cost per 1000 boxes (1000 yuan) |\n|------|---------------------|----------------------------------|----------------------------------|\n| 1    | 15                  | 30                               | 5.0                              |\n| 2    | 25                  | 40                               | 5.1                              |\n| 3    | 35                  | 45                               | 5.4                              |\n| 4    | 25                  | 20                               | 5.5                              |\n| Total | 100                 | 135                              |                                  |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Storage cost: 0.2 thousand yuan per week per thousand boxes of beverages."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize the total cost (the sum of production cost and storage cost) over the four weeks."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Weekly market demand must be met."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Weekly production cannot exceed the production capacity for that week."
+
+[[problem_units]]
+id = "U7"
+kind = "assumption"
+content = "Beverages remaining at the end of a week can be stored for use in later weeks, incurring the storage cost."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "minimize_total_production_and_storage_cost"
+severity = "P0"
+severity_reason = "Without the objective, the agent has no basis to define what constitutes an optimal plan; the problem is undefined and cannot be formulated."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What exactly are we trying to minimize? Is it the total production cost plus storage cost over the whole period?", "Should the objective be to minimize the sum of production and inventory holding costs across all four weeks?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the cost objective, indicating uncertainty about whether storage cost is included or what costs are minimized."
+failure_modes = ["Assuming the objective is to minimize only production cost", "Assuming the objective is to maximize profit without a selling price", "Assuming the objective is to minimize the total number of boxes produced"]
+simulator_answer = "We want to minimize the sum of production costs and storage costs over all four weeks."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "demand_must_be_met_each_week"
+severity = "P1"
+severity_reason = "Missing this constraint could lead to a model where demand is not fully satisfied, which would produce a materially invalid business plan, even though the optimization would remain mathematically coherent."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Do we have to satisfy the demand completely each week, or can we backorder or leave some demand unmet?", "Is it mandatory to meet all weekly demand, or can we have a shortfall and make up later?"]
+semantic_hit_rule = "The agent's question must explicitly ask about demand satisfaction obligations, such as whether demand must be fully met each week or if backlog/unmet demand is allowed."
+failure_modes = ["Silently assuming backorders are allowed with a penalty cost", "Assuming unmet demand is lost and considered acceptable", "Assuming demand is a soft target that can be partially fulfilled"]
+simulator_answer = "All demand must be met each week. There is no option to postpone or not deliver."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U2", "U3"]
+content = "I need help creating a production plan for a beverage factory over a four-week horizon, where weekly production cannot exceed the production capacity for that week, and beverages remaining at the end of a week can be stored for use in later weeks, incurring the storage cost.\n\n| Week | Demand (1000 boxes) | Production Capacity (1000 boxes) | Cost per 1000 boxes (1000 yuan) |\n|------|---------------------|----------------------------------|----------------------------------|\n| 1    | 15                  | 30                               | 5.0                              |\n| 2    | 25                  | 40                               | 5.1                              |\n| 3    | 35                  | 45                               | 5.4                              |\n| 4    | 25                  | 20                               | 5.5                              |\n| Total | 100                 | 135                              |                                  |\n\nStorage cost: 0.2 thousand yuan per week per thousand boxes of beverages."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

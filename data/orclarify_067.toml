@@ -1,0 +1,97 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_067"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production schedule for products I and II from July to December."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Product I requires 10,000 units per month from January to April, 30,000 units per month from May to September, and 100,000 units per month from October to December. Product II requires 15,000 units per month from March to September and 50,000 units per month during other months."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Product I costs 5 yuan per unit to produce from January to May, and 4.50 yuan per unit from June to December; Product II costs 8 yuan per unit to produce from January to May, and 7 yuan per unit from June to December."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Product I has a volume of 0.2 cubic meters per unit, Product II has a volume of 0.4 cubic meters per unit."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "The factory's warehouse capacity is 15,000 cubic meters."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Using the factory’s own warehouse costs 1 yuan per cubic meter per month, while renting an external warehouse costs 1.5 yuan per cubic meter per month."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "The factory's combined production capacity for both products is 120,000 units per month."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The factory's combined production capacity for both products should not exceed 120,000 units per month."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The schedule must meet market demand for both products."
+
+[[problem_units]]
+id = "U10"
+kind = "assumption"
+content = "Given that the initial inventory of both products at the beginning of July is zero."
+
+[[problem_units]]
+id = "U11"
+kind = "objective"
+content = "Minimize total production and inventory costs."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "demand_satisfaction_requirement"
+severity = "P0"
+severity_reason = "Without this constraint, the objective can be trivially satisfied by producing nothing, making the model ill-posed. The agent cannot proceed without confirming whether demand must be met exactly, or if shortages/backorders are allowed."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["Does the production schedule have to exactly meet the monthly demand for each product, or can we have backorders or lost sales?", "What happens if production falls short of demand in a given month? Is unmet demand allowed?"]
+semantic_hit_rule = "The agent's question must explore the demand fulfillment condition, specifically whether demand must be fully satisfied each period or if unmet demand can be postponed/lost."
+failure_modes = ["Assuming demand can be partially unmet without penalty.", "Assuming that any shortfall can be backlogged to later months."]
+simulator_answer = "We need to fully meet the market demand each month. No shortages are allowed; we must always have enough product to satisfy the demand."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "initial_inventory_zero"
+severity = "P1"
+severity_reason = "The starting inventory level directly affects the inventory balance for the first month and subsequent months. Without it, the agent would have to guess the opening stock, leading to a materially different cost calculation and possibly infeasible first-period production."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["What is the inventory level at the start of July? Do we have any carry-over stock from previous months?", "For both products, are there any units already in the warehouse on July 1st?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the initial inventory quantity for one or both products at the start of the planning period."
+failure_modes = ["Assuming a non-zero initial inventory (e.g., some leftover stock from June).", "Assuming the initial inventory equals the demand of July."]
+simulator_answer = "At the beginning of July, we have no inventory of either product. The warehouse is completely empty at the start."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U8", "U11", "U2", "U3", "U4", "U5", "U6", "U7"]
+content = "I need help creating a production schedule for products I and II from July to December, where the factory's combined production capacity for both products should not exceed 120,000 units per month, and the objective is to minimize total production and inventory costs.\n\nProduct I requires 10,000 units per month from January to April, 30,000 units per month from May to September, and 100,000 units per month from October to December. Product II requires 15,000 units per month from March to September and 50,000 units per month during other months.\n\nProduct I costs 5 yuan per unit to produce from January to May, and 4.50 yuan per unit from June to December; Product II costs 8 yuan per unit to produce from January to May, and 7 yuan per unit from June to December.\n\nProduct I has a volume of 0.2 cubic meters per unit, Product II has a volume of 0.4 cubic meters per unit.\n\nThe factory's warehouse capacity is 15,000 cubic meters.\n\nUsing the factory’s own warehouse costs 1 yuan per cubic meter per month, while renting an external warehouse costs 1.5 yuan per cubic meter per month.\n\nThe factory's combined production capacity for both products is 120,000 units per month."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

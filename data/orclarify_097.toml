@@ -1,0 +1,129 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_097"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need to determine a production plan for two liquid products A and B from raw materials A, B, C, and D."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Raw material sulfur contents and purchase prices:\n\n| Raw Material | Sulfur Content (%) | Purchase Price (thousand yuan/ton) |\n|--------------|-------------------|------------------------------------|\n| A            | 3%                | 6                                  |\n| B            | 1%                | 16                                 |\n| C            | 2%                | 10                                 |\n| D            | 1%                | 15                                 |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Selling prices: Product A: 9.15 thousand yuan/ton, Product B: 9.15 thousand yuan/ton."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Maximum supply of raw material D: 50 tons."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The amount of raw material D used cannot exceed 50 tons."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Market demand: Product A: 100 tons, Product B: 200 tons."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Production of product A cannot exceed its market demand of 100 tons."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Production of product B cannot exceed its market demand of 200 tons."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "According to the production process requirements, raw materials A, B, and D must first be mixed in a mixing tank, and then the mixed liquid is further mixed with raw material C to produce products A and B."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The sulfur content of product A must not exceed 2.5%."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "The sulfur content of product B must not exceed 1.5%."
+
+[[problem_units]]
+id = "U12"
+kind = "assumption"
+content = "There is no limit to the supply of raw materials A, B, and C."
+
+[[problem_units]]
+id = "U13"
+kind = "objective"
+content = "Maximize profit."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "product_A_demand_cap"
+severity = "P2"
+severity_reason = "The data on market demand is already provided (U6), so the agent can reasonably infer a production cap. Missing this explicit constraint does not prevent modeling but could lead to minor oversight."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Can we produce more than the market demand for product A, or should production not exceed 100 tons?", "Is the production of product A limited by its market demand?"]
+semantic_hit_rule = "The agent's question must explicitly ask whether production of A is capped by its market demand."
+failure_modes = ["Assuming production can exceed market demand and inventory is possible", "Overlooking the demand constraint entirely and allowing unlimited sales"]
+simulator_answer = "No, production of product A cannot exceed the market demand of 100 tons."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "product_B_demand_cap"
+severity = "P2"
+severity_reason = "Similar to product A, the demand figure for B is given, so the constraint can be inferred. Missing it is a low-impact detail."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["Is there a limit on how much of product B we can sell? Should we keep production at or below 200 tons?"]
+semantic_hit_rule = "The agent's question must explicitly ask whether production of B is capped by its market demand."
+failure_modes = ["Assuming unlimited demand for B", "Setting production of B above 200 tons"]
+simulator_answer = "Production of product B must not exceed the market demand of 200 tons."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "mixing_process_sequence"
+severity = "P0"
+severity_reason = "This is a critical production constraint that defines the feasible mixing process. Without it, the agent cannot correctly formulate the material balance and quality constraints."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["Could you clarify the mixing order of raw materials? Do we mix A, B, and D first and then add C, or can we mix them all at once?"]
+semantic_hit_rule = "The agent's question must mention the specific two-stage mixing process involving A,B,D first and then with C."
+failure_modes = ["Assuming all four raw materials can be mixed simultaneously in any proportion", "Ignoring the sequential mixing requirement and causing incorrect sulfur content tracking"]
+simulator_answer = "Yes, the production process requires that raw materials A, B, and D are first blended in the mixing tank, and then that intermediate mixture is combined with raw material C to produce the final products."
+
+[[hidden_slots]]
+slot_id = "H4"
+name = "objective_function"
+severity = "P0"
+severity_reason = "Without an objective, the optimization problem is not defined; the agent cannot formulate a meaningful model or know what to optimize."
+problem_unit_id = "U13"
+reference_acceptable_questions = ["What exactly are we trying to optimize? Is it maximizing total profit, or something else like minimizing cost?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the optimization goal, e.g., 'maximize profit'."
+failure_modes = ["Assuming cost minimization without considering revenue", "Formulating without an objective function", "Assuming a multi-objective without clarification"]
+simulator_answer = "We want to maximize the profit."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U10", "U11", "U12", "U2", "U3", "U4", "U6"]
+content = "I need to determine a production plan for two liquid products A and B from raw materials A, B, C, and D, subject to the constraints that the amount of raw material D used cannot exceed 50 tons, the sulfur content of product A must not exceed 2.5%, and the sulfur content of product B must not exceed 1.5%, with the assumption that there is no limit to the supply of raw materials A, B, and C.\n\nRaw material sulfur contents and purchase prices:\n\n| Raw Material | Sulfur Content (%) | Purchase Price (thousand yuan/ton) |\n|--------------|-------------------|------------------------------------|\n| A            | 3%                | 6                                  |\n| B            | 1%                | 16                                 |\n| C            | 2%                | 10                                 |\n| D            | 1%                | 15                                 |\n\nSelling prices: Product A: 9.15 thousand yuan/ton, Product B: 9.15 thousand yuan/ton.\n\nMaximum supply of raw material D: 50 tons.\n\nMarket demand: Product A: 100 tons, Product B: 200 tons."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

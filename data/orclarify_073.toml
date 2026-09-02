@@ -1,0 +1,113 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_073"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help selecting which children to bring on a trip."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Costs to take each child: Alice $1000, Bob $900, Charlie $600, Diana $500, Ella $700."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Maximum number of children allowed on the trip: 3."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "The number of selected children cannot exceed 3."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Bob must be selected."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "If Alice is selected, then Diana cannot be selected."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "If Bob is selected, then Charlie cannot be selected."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "If Charlie is selected, then Diana must be selected."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "If Diana is selected, then Ella must be selected."
+
+[[problem_units]]
+id = "U10"
+kind = "data"
+content = "Minimum number of children to take: 2."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "The total number of selected children must be at least 2."
+
+[[problem_units]]
+id = "U12"
+kind = "objective"
+content = "Minimize the total cost of the selected children."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "mandatory_bob_selection"
+severity = "P1"
+severity_reason = "The problem remains a coherent children selection model without this explicit constraint, but the solution would likely violate a known family rule, making the recommendation materially inaccurate."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Are there any children that must absolutely be included on the trip?", "Is there a specific child, like Bob, that we are required to take?"]
+semantic_hit_rule = "The Agent's question must explicitly ask whether any child is mandatory, or directly mention Bob as a required selection."
+failure_modes = ["Assuming no child is mandatory and freely choosing the cheapest three children.", "Treating all children as optional and ignoring the family's insistence on Bob."]
+simulator_answer = "Yes, Bob is the youngest, so we definitely have to take him. It's non-negotiable."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "alice_diana_conflict_rule"
+severity = "P1"
+severity_reason = "The absence of this conflict rule still allows formulation of a valid optimization model, but the resulting selection could place Alice and Diana together, which is not allowed in practice, leading to a business‑invalid answer."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["Are there any children who can't be taken together because they don't get along?", "Does Alice's presence affect whether Diana can come?"]
+semantic_hit_rule = "The Agent's question must ask about mutual exclusion or conflict constraints, specifically referencing Alice and Diana (or a general rule about them not traveling together)."
+failure_modes = ["Silently assuming all children are compatible and allowing Alice and Diana in the same group.", "Overlooking interpersonal dynamics and formulating clean logical constraints without this rule."]
+simulator_answer = "Alice and Diana don't get along, so if we take Alice, Diana cannot come."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "minimize_total_cost_objective"
+severity = "P0"
+severity_reason = "Without a stated objective, the problem is ill‑posed; a responsible modeling agent cannot define the optimization direction and would be forced to guess, risking a completely wrong model."
+problem_unit_id = "U12"
+reference_acceptable_questions = ["What is the goal—should we minimize the total cost?", "Are we trying to spend as little as possible on the children we take?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about the objective and confirm it is to minimize total cost (or ask what to optimize)."
+failure_modes = ["Assuming we want to maximize the number of children taken.", "Proceeding with a generic feasibility model without an objective."]
+simulator_answer = "We just want to spend as little as possible. Our goal is to minimize the total cost."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U7", "U8", "U9", "U11", "U2", "U3", "U10"]
+content = "I need help selecting which children to bring on a trip, with the number of selected children not exceeding 3 and at least 2, and further constraints: if Bob is selected then Charlie cannot be selected, if Charlie is selected then Diana must be selected, and if Diana is selected then Ella must be selected.\n\nCosts to take each child: Alice $1000, Bob $900, Charlie $600, Diana $500, Ella $700.\n\nMaximum number of children allowed on the trip: 3.\n\nMinimum number of children to take: 2."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

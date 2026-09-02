@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_061"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning the production of a product using available devices."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Device | Prep Completion Cost (Yuan) | Unit Production Cost (Yuan/Unit) | Maximum Processing Capacity (Units) |\n|--------|------------------------------|----------------------------------|------------------------------------|\n| A      | 1000                         | 20                               | 900                                |\n| B      | 920                          | 24                               | 1000                               |\n| C      | 800                          | 16                               | 1200                               |\n| D      | 700                          | 28                               | 1600                               |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Total units to produce: 2000."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize total cost."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The product must be processed on exactly one device."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The production quantity on a device cannot exceed its maximum processing capacity."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The total quantity produced must exactly meet the demand of 2000 units."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unknown_objective"
+severity = "P0"
+severity_reason = "Without knowing the objective, the modeling agent cannot formulate a meaningful optimization model; the problem would be ill-posed and lacks a direction for optimization."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What exactly should be minimized? Are we minimizing the total of setup costs plus unit production costs?", "Is the objective to minimize total cost, or are there other factors like minimizing production time?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the objective of the optimization, such as what quantity to minimize or confirm that the goal is to minimize total cost."
+failure_modes = ["Silently assuming the objective is to minimize only unit production costs, ignoring preparation completion costs.", "Assuming the goal is to minimize the number of devices used rather than total cost."]
+simulator_answer = "We want to minimize the total cost of producing the product."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U7", "U2", "U3"]
+content = "I need help planning the production of a product using available devices, where the product must be processed on exactly one device. The production quantity on a device cannot exceed its maximum processing capacity, and the total quantity produced must exactly meet the demand of 2000 units.\n\n| Device | Prep Completion Cost (Yuan) | Unit Production Cost (Yuan/Unit) | Maximum Processing Capacity (Units) |\n|--------|------------------------------|----------------------------------|------------------------------------|\n| A      | 1000                         | 20                               | 900                                |\n| B      | 920                          | 24                               | 1000                               |\n| C      | 800                          | 16                               | 1200                               |\n| D      | 700                          | 28                               | 1600                               |\n\nTotal units to produce: 2000."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

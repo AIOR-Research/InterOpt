@@ -1,0 +1,92 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_020"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for toys to maximize profit."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Profit per unit: robot $15, model car $8, building blocks $12, doll $5."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Plastic: 1200 units available. Each robot requires 30 units, model car 10 units, building blocks 20 units, doll 15 units."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Electronic components: 800 units available. Each robot requires 8 units, model car 5 units, building blocks 3 units, doll 2 units."
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Maximize total profit."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Total plastic used cannot exceed 1200 units."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Total electronic components used cannot exceed 800 units."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "If Bright Future Toys manufactures robots, they will not manufacture dolls."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "However, if they manufacture model cars, they will also manufacture building blocks."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The number of dolls manufactured cannot exceed the number of model cars manufactured."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "robot_doll_mutual_exclusion"
+severity = "P1"
+severity_reason = "Without this conditional constraint, the optimization model would allow simultaneous production of robots and dolls, which is prohibited by the business rule, leading to an invalid production plan."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["Are there any restrictions on producing robots and dolls together?", "Is it possible to make both robots and dolls, or must we choose one?"]
+semantic_hit_rule = "Agent's question must express the need to know whether manufacturing robots prevents making dolls, or inquire about production restrictions between robots and dolls."
+failure_modes = ["Assuming robots and dolls can both be manufactured simultaneously", "Assuming no mutual exclusivity between any product types"]
+simulator_answer = "If we decide to manufacture robots, we will not produce any dolls at all."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "doll_model_car_quantity_limit"
+severity = "P1"
+severity_reason = "Without this constraint, the model would allow manufacturing more dolls than model cars, violating the business rule and producing an infeasible production plan."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Is there any limit on how many dolls we can produce compared to model cars?", "Must doll production be less than or equal to model car production?"]
+semantic_hit_rule = "Agent's question must explicitly mention the relationship between the quantities of dolls and model cars, specifically whether doll count is capped by model car count."
+failure_modes = ["Assuming doll production can be arbitrarily higher than model car production", "Assuming no linking constraint between dolls and model cars"]
+simulator_answer = "The number of dolls we produce cannot be more than the number of model cars we produce."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U7", "U9", "U2", "U3", "U4"]
+content = "I need help creating a production plan for toys to maximize profit. The objective is to maximize total profit. Total plastic used cannot exceed 1200 units, and total electronic components used cannot exceed 800 units. However, if they manufacture model cars, they will also manufacture building blocks.\n\nProfit per unit: robot $15, model car $8, building blocks $12, doll $5.\n\nPlastic: 1200 units available. Each robot requires 30 units, model car 10 units, building blocks 20 units, doll 15 units.\n\nElectronic components: 800 units available. Each robot requires 8 units, model car 5 units, building blocks 3 units, doll 2 units."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

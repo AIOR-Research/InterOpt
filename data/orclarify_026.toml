@@ -1,0 +1,61 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_026"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning the staffing for a 24-hour convenience store."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Required number of salespeople per time period:\n2:00-6:00: 10\n6:00-10:00: 15\n10:00-14:00: 25\n14:00-18:00: 20\n18:00-22:00: 18\n22:00-2:00: 12"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Shift start times: 2:00, 6:00, 10:00, 14:00, 18:00, 22:00. Shift duration: 8 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize the total number of salespeople needed to meet the requirements."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "For each time period, the number of salespeople scheduled to work during that period must be at least the required number for that period."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Each salesperson works exactly one 8-hour shift, starting at one of the specified start times (2:00, 6:00, 10:00, 14:00, 18:00, or 22:00), covering the four consecutive 2-hour periods from the start time."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_minimization_objective"
+severity = "P0"
+severity_reason = "Without the objective function, the agent cannot determine what constitutes an optimal solution; the problem is ill-posed and modeling cannot proceed meaningfuly."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What are we trying to optimize here? Is the goal to minimize the total number of salespeople?", "Just to confirm, are we minimizing the total headcount of salespeople scheduled overall?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the objective or goal of the staffing problem, specifically whether the aim is to minimize the total number of salespeople."
+failure_modes = ["Silent incorrect assumption: Assuming the objective is to minimize total labor cost rather than total number of salespeople.", "Silent incorrect assumption: Assuming the objective is to maximize service level or employee satisfaction without clarification.", "Silent incorrect assumption: Proceeding to build a feasible schedule without any optimization objective."]
+simulator_answer = "We want to figure out the smallest total number of salespeople we need to hire, so that we have enough coverage in every time block."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U2", "U3"]
+content = "I need help planning the staffing for a 24-hour convenience store, and for each time period, the number of salespeople scheduled to work during that period must be at least the required number for that period, while each salesperson works exactly one 8-hour shift, starting at one of the specified start times (2:00, 6:00, 10:00, 14:00, 18:00, or 22:00), covering the four consecutive 2-hour periods from the start time.\n\nRequired number of salespeople per time period:\n2:00-6:00: 10\n6:00-10:00: 15\n10:00-14:00: 25\n14:00-18:00: 20\n18:00-22:00: 18\n22:00-2:00: 12\n\nShift start times: 2:00, 6:00, 10:00, 14:00, 18:00, 22:00. Shift duration: 8 hours."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

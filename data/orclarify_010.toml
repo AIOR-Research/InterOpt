@@ -1,0 +1,51 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_010"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning the opening of several chain stores in a new residential area."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Area Code | Residential Areas within 800 m Radius |\n|-----------|---------------------------------------|\n| A         | A, C, E, G, H, I                      |\n| B         | B, H, I                               |\n| C         | A, C, G, H, I                         |\n| D         | D, J                                  |\n| E         | A, E, G                               |\n| F         | F, J, K                               |\n| G         | A, C, E, G                            |\n| H         | A, B, C, H, I                         |\n| I         | A, B, C, H, I                         |\n| J         | D, F, J, K, L                         |\n| K         | F, J, K, L                            |\n| L         | J, K, L                               |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Minimize the number of chain stores built."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "The distance from any residential area to at least one chain store must not exceed 800 meters."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "max_distance_800m"
+severity = "P0"
+severity_reason = "Without this constraint, the problem reduces to minimizing an unbounded number of stores with no service coverage requirement, making the model ill-posed and the provided distance table irrelevant."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What is the maximum allowed distance between a residential area and the nearest chain store?", "Do we need to ensure every residential area is within 800 meters of at least one store?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about the coverage radius or maximum allowed distance for a residential area to be considered served by a chain store."
+failure_modes = ["Assuming all residential areas are served regardless of distance", "Assuming the data table is just for reference and not a hard constraint"]
+simulator_answer = "Yes, we want to ensure that every resident living in those areas is within an 800-meter walk to the nearest store. So each residential area must be within that distance of at least one store we build."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U3", "U2"]
+content = "I need help planning the opening of several chain stores in a new residential area while minimizing the number of chain stores built.\n\n| Area Code | Residential Areas within 800 m Radius |\n|-----------|---------------------------------------|\n| A         | A, C, E, G, H, I                      |\n| B         | B, H, I                               |\n| C         | A, C, G, H, I                         |\n| D         | D, J                                  |\n| E         | A, E, G                               |\n| F         | F, J, K                               |\n| G         | A, C, E, G                            |\n| H         | A, B, C, H, I                         |\n| I         | A, B, C, H, I                         |\n| J         | D, F, J, K, L                         |\n| K         | F, J, K, L                            |\n| L         | J, K, L                               |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

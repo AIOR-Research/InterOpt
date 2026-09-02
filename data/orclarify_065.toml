@@ -1,0 +1,108 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_065"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help determining a monthly production plan for a company producing microwave ovens and water heaters in two workshops (A and B)."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Processing requirements per unit: microwave oven requires 2 hours in workshop A and 1 hour in workshop B; water heater requires 1 hour in workshop A and 3 hours in workshop B."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Inspection and sales cost per unit: microwave oven 30 yuan, water heater 50 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Workshop A: 250 hours available per month, cost 80 yuan per hour."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Workshop B: 150 hours available per month, cost 20 yuan per hour."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Estimated average monthly sales next year: 80 microwave ovens, 50 water heaters."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Inspection and sales costs should not exceed 5500 yuan per month."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "At least 80 microwave ovens should be sold per month."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The production hours of both workshops A and B should be fully utilized."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Overtime in workshop A should not exceed 20 hours."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "At least 50 water heaters should be sold per month."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "inspection_cost_limit"
+severity = "P1"
+severity_reason = "Without this constraint, the agent could formulate a model that ignores the monthly budget cap on inspection and sales costs, leading to a plan that violates the company's financial limit. It is a critical business rule that materially changes the feasible region."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Do the inspection and sales costs have a monthly budget? The problem mentions it should not exceed 5500 yuan, can you confirm?", "Is there a limit on the total cost of inspection and sales per month?"]
+semantic_hit_rule = "The agent's question must ask about the inspection/sales cost budget or confirm the 5500 yuan monthly limit."
+failure_modes = ["Assuming there is no limit on total inspection and sales costs.", "Treating the per-unit costs (30/50 yuan) as purely variable expenses without any aggregate cap."]
+simulator_answer = "Yes, the monthly total cost for inspection and sales of all products should not exceed 5500 yuan."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "overtime_limit_workshop_a"
+severity = "P1"
+severity_reason = "Without this constraint, the agent might assume there is no overtime allowed or that overtime is unlimited. The model would then incorrectly treat workshop A's capacity, making the problem either infeasible (if full utilization of regular hours is required without overtime) or unbounded. This is an important clarification for the capacity structure."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Is overtime allowed in workshop A? If so, up to how many hours?", "Can workshop A work beyond the 250 regular hours, and what is the overtime limit?"]
+semantic_hit_rule = "The agent's question must ask about the possibility and/or limit of overtime hours for workshop A."
+failure_modes = ["Assuming workshop A's capacity is fixed at exactly 250 hours with no flexibility.", "Assuming workshop A can use unlimited overtime hours."]
+simulator_answer = "Workshop A can have overtime, but it should not exceed 20 hours per month."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "minimum_water_heater_sales"
+severity = "P2"
+severity_reason = "The problem still yields a coherent production planning model without this lower bound, as the minimum microwave sales (U8) and other constraints are present. The omission would create a valid alternative scenario, but adding this constraint enforces a specific business requirement that slightly restricts the feasible region."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Is there a minimum number of water heaters that must be sold each month?", "Should the plan ensure that at least 50 water heaters are sold?"]
+semantic_hit_rule = "The agent's question must ask about a minimum sales requirement for water heaters."
+failure_modes = ["Assuming no minimum sales constraint exists for water heaters.", "Using only the estimated average (50) as a target but not as a hard lower bound."]
+simulator_answer = "Yes, the plan must ensure that at least 50 water heaters are sold each month."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U8", "U9", "U2", "U3", "U4", "U5", "U6"]
+content = "I need help determining a monthly production plan for a company producing microwave ovens and water heaters in two workshops (A and B), where at least 80 microwave ovens should be sold per month, and the production hours of both workshops A and B should be fully utilized.\n\nProcessing requirements per unit: microwave oven requires 2 hours in workshop A and 1 hour in workshop B; water heater requires 1 hour in workshop A and 3 hours in workshop B.\n\nInspection and sales cost per unit: microwave oven 30 yuan, water heater 50 yuan.\n\nWorkshop A: 250 hours available per month, cost 80 yuan per hour.\n\nWorkshop B: 150 hours available per month, cost 20 yuan per hour.\n\nEstimated average monthly sales next year: 80 microwave ovens, 50 water heaters."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,88 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_002"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help determining the number of trained pilots that can be provided by a fighter jet production and training setup."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Annual fighter jet production: a1 = 10, a2 = 15."
+
+[[problem_units]]
+id = "U3"
+kind = "constraint"
+content = "Each training jet can train 5 pilots per year."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Each trained pilot can operate one combat jet in subsequent years."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Some fighter jets each year must be allocated exclusively for pilot training."
+
+[[problem_units]]
+id = "U6"
+kind = "assumption"
+content = "Training starts in year 1 and continues for 2 years."
+
+[[problem_units]]
+id = "U7"
+kind = "objective"
+content = "Determine the total number of trained pilots available by the end of year 2."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "training_capacity_per_jet"
+severity = "P0"
+severity_reason = "Without the per-jet training capacity, it is impossible to calculate the number of pilots trained per year, which is essential to achieving the objective. The model would be completely indeterminate."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["How many pilots can each training jet train per year?", "What is the training capacity of a single jet in terms of pilots?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the per-year pilot training capacity of each training jet."
+failure_modes = ["Assuming each jet can train 1 pilot per year", "Assuming unlimited training capacity per jet", "Assuming training capacity is proportional to jet age or type"]
+simulator_answer = "Each training jet can train 5 pilots per year."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "pilot_to_combat_jet_mapping"
+severity = "P2"
+severity_reason = "Without this information, the number of trained pilots available for air defense could be misinterpreted, but a reasonable model would still treat trained pilots as directly contributing. The missing unit clarifies the one-to-one mapping, but the total count of trained pilots remains the same. Omitting this does not prevent computing the number of trained pilots, so it is a low-impact detail."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["How many combat jets can a trained pilot operate?", "Is there a limit on how many jets a pilot can handle?"]
+semantic_hit_rule = "The agent's question must ask about the relationship between trained pilots and combat jets, specifically the number of jets a pilot can operate."
+failure_modes = ["Assuming each pilot can operate multiple combat jets", "Assuming pilots need further training before operating any combat jet", "Assuming the pilot-to-jet ratio depends on jet type"]
+simulator_answer = "A trained pilot can operate one combat jet in subsequent years."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "training_duration_and_start"
+severity = "P1"
+severity_reason = "The start year and duration of training are not completely determined from the objective alone, and without them, the model might incorrectly set the training timeline, leading to a wrong total. A responsible agent should clarify the exact training period."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["When does the training program start?", "How many years does the training last?"]
+semantic_hit_rule = "The agent's question must mention the start year or the duration of the training program."
+failure_modes = ["Assuming training has already started before year 1", "Assuming training lasts only 1 year", "Assuming training continues indefinitely"]
+simulator_answer = "Training starts in year 1 and continues for 2 years."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U7", "U2"]
+content = "I need help determining the number of trained pilots that can be provided by a fighter jet production and training setup, where some fighter jets each year must be allocated exclusively for pilot training. Specifically, determine the total number of trained pilots available by the end of year 2.\n\nAnnual fighter jet production: a1 = 10, a2 = 15."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

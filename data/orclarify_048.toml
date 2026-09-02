@@ -1,0 +1,98 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_048"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for two microcomputer models, A and B."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Process | Model A | Model B | Maximum Weekly Processing Capacity |\n|---------|---------|---------|------------------------------------|\n| I (hours/unit) | 4 | 6 | 150 |\n| II (hours/unit) | 3 | 2 | 70 |\n| Profit (yuan/unit) | 300 | 450 | |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Profit per unit when produced during overtime in Process II: Model A 280 yuan, Model B 425 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Total weekly profit must be at least 10,000 yuan."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "At least 10 units of model A must be produced each week."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "At least 15 units of model B must be produced each week."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The processing time for Process I must be exactly 150 hours per week."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The regular processing time for Process II must not exceed its maximum weekly capacity of 70 hours."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The overtime processing for Process II must not exceed 30 hours per week."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "min_weekly_production_A"
+severity = "P1"
+severity_reason = "Without this constraint, the model could produce fewer than 10 units of model A, violating a contractual obligation and making the solution business-invalid."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["What is the minimum number of model A microcomputers we must produce each week?", "Are there any minimum production requirements for model A?"]
+semantic_hit_rule = "The Agent's question must inquire about a minimum or lower bound on the weekly production quantity of model A, or ask if there is any requirement to produce at least a certain number of A."
+failure_modes = ["Assuming no minimum production requirement for model A (production can be zero)", "Assuming a different arbitrary lower bound"]
+simulator_answer = "Due to a contract requirement, we must produce at least 10 units of model A each week."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "min_weekly_production_B"
+severity = "P1"
+severity_reason = "Missing this constraint would allow the model to produce fewer than 15 units of model B, violating a contract and leading to a business-invalid solution."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["How many model B microcomputers do we need to produce at minimum each week?", "Is there a lower bound on the weekly production of model B?"]
+semantic_hit_rule = "The Agent's question asks for the minimum required weekly output of model B or whether there is a lower bound on B production."
+failure_modes = ["Assuming no minimum production requirement for model B", "Assuming an incorrect lower limit for B"]
+simulator_answer = "We have a contract that requires at least 15 units of model B to be produced every week."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "max_overtime_process_II"
+severity = "P1"
+severity_reason = "Without this limit, the model could treat overtime as unbounded, which would completely distort the feasible region and profit calculations, or could omit overtime entirely."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["What is the maximum allowed overtime for Process II?", "How many hours of overtime per week are permitted for Process II?"]
+semantic_hit_rule = "The Agent's question must explicitly ask for the upper limit or cap on overtime hours for Process II."
+failure_modes = ["Assuming unlimited overtime for Process II", "Assuming no overtime is allowed for Process II", "Assuming a different arbitrary overtime cap"]
+simulator_answer = "The overtime on Process II is limited to 30 hours per week."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U7", "U8", "U2", "U3"]
+content = "I need help creating a production plan for two microcomputer models, A and B, where the total weekly profit must be at least 10,000 yuan, the processing time for Process I must be exactly 150 hours per week, and the regular processing time for Process II must not exceed its maximum weekly capacity of 70 hours.\n\n| Process | Model A | Model B | Maximum Weekly Processing Capacity |\n|---------|---------|---------|------------------------------------|\n| I (hours/unit) | 4 | 6 | 150 |\n| II (hours/unit) | 3 | 2 | 70 |\n| Profit (yuan/unit) | 300 | 450 | |\n\nProfit per unit when produced during overtime in Process II: Model A 280 yuan, Model B 425 yuan."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

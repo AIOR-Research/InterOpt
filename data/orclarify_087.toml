@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_087"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help determining how many Type A and Type B trucks to rent to transport refrigerated and non-refrigerated cargo."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Type A trucks have 20 cubic meters of refrigerated capacity and 40 cubic meters of non-refrigerated capacity. Type B trucks have the same total capacity as Type A, but the capacities for refrigerated and non-refrigerated cargo are equal."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "A grocer needs to transport 3000 cubic meters of refrigerated cargo and 4000 cubic meters of non-refrigerated cargo."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "The rental cost per kilometer for Type A trucks is £30, and for Type B trucks is £40."
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Minimize the total cost."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The total refrigerated cargo capacity from the rented trucks must be at least 3000 cubic meters."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The total non-refrigerated cargo capacity from the rented trucks must be at least 4000 cubic meters."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without the objective, the problem has no defined optimization goal, making a meaningful model impossible. The agent must clarify what to minimize or maximize before proceeding."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["What should the model minimize? For example, is it total cost?", "What is the objective function we are trying to optimize?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the objective function, such as what to minimize."
+failure_modes = ["Incorrectly assuming the objective is to minimize the number of trucks", "Assuming the goal is to minimize total distance or fuel consumption"]
+simulator_answer = "The objective is to minimize the total cost of renting the trucks."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U2", "U3", "U4"]
+content = "I need help determining how many Type A and Type B trucks to rent to transport refrigerated and non-refrigerated cargo, while ensuring the total refrigerated cargo capacity from the rented trucks is at least 3000 cubic meters and the total non-refrigerated cargo capacity is at least 4000 cubic meters.\n\nType A trucks have 20 cubic meters of refrigerated capacity and 40 cubic meters of non-refrigerated capacity. Type B trucks have the same total capacity as Type A, but the capacities for refrigerated and non-refrigerated cargo are equal.\n\nA grocer needs to transport 3000 cubic meters of refrigerated cargo and 4000 cubic meters of non-refrigerated cargo.\n\nThe rental cost per kilometer for Type A trucks is £30, and for Type B trucks is £40."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_091"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for two products."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Profit per unit sold: Product A: £3, Product B: £5."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Assembly time per unit: Product A: 12 minutes, Product B: 25 minutes."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Effective machine working time per week: 30 hours."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Total assembly time per week must not exceed 30 hours."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "For every five units of product A produced, at least two units of product B must be produced."
+
+[[problem_units]]
+id = "U7"
+kind = "objective"
+content = "Maximize total profit: £3 per unit of A sold + £5 per unit of B sold."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_production_ratio_constraint"
+severity = "P1"
+severity_reason = "Without this constraint, the model would yield a production plan that might not satisfy the required product mix, making it inaccurate for the real-world scenario. However, a valid optimization model can still be formulated without it."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["Is there any required production ratio between product A and product B?", "Do we need to maintain a specific mix, like at least 2 units of B for every 5 units of A?"]
+semantic_hit_rule = "The agent's question must explicitly inquire about a required production ratio or proportional constraint linking the quantities of products A and B."
+failure_modes = ["Silently assuming no production mix requirement, leading to a solution that might only produce product A.", "Assuming the two products are independent and only limited by machine time."]
+simulator_answer = "Yes, we have a technical constraint: for every five units of product A we make, at least two units of product B must be produced."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U7", "U2", "U3", "U4"]
+content = "I need help creating a production plan for two products, where total assembly time per week must not exceed 30 hours and we aim to maximize total profit, which is £3 per unit of A sold plus £5 per unit of B sold.\n\nProfit per unit sold: Product A: £3, Product B: £5.\n\nAssembly time per unit: Product A: 12 minutes, Product B: 25 minutes.\n\nEffective machine working time per week: 30 hours."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

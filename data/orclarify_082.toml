@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_082"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a leasing plan for store types in a shopping mall."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Changjiang Comprehensive Shopping Mall has 5000 m² of space for lease."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Table 5-12\n\n| Code | Store Type | Area per Shop / m² | Min | Max | 1 Store | 2 Stores | 3 Stores |\n|------|------------|--------------------|-----|-----|---------|----------|----------|\n| 1    | Jewelry    | 250                | 1   | 3   | 9       | 8        | 7        |\n| 2    | Shoes & Hats | 350              | 1   | 2   | 10      | 9        | -        |\n| 3    | General Merchandise | 800      | 1   | 3   | 27      | 21       | 20       |\n| 4    | Bookstore  | 400                | 0   | 2   | 16      | 10       | -        |\n| 5    | Catering   | 500                | 1   | 3   | 17      | 15       | 12       |"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Each store pays 20% of its annual profit as rent to the mall."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "For each store type, the number of shops must be between the given minimum and maximum (inclusive)."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The total area of all leased shops cannot exceed 5000 m²."
+
+[[problem_units]]
+id = "U7"
+kind = "objective"
+content = "Maximize total rental income."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unstated_objective"
+severity = "P0"
+severity_reason = "Without knowing the objective, the optimization problem is ill‑posed. There is no criterion to decide which store allocation is best, making any modeling attempt arbitrary."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["What is the goal of the leasing plan? Are we trying to maximize profit, revenue, or something else?", "What are we trying to optimize here? Is it total rental income?"]
+semantic_hit_rule = "The agent's question must ask about the objective or goal of the leasing plan, specifically mentioning maximization or optimization of something related to income, profit, or rental."
+failure_modes = ["Assuming the objective is to maximize the number of shops leased", "Assuming the objective is to maximize total profit (rather than rental income)", "Assuming the objective is to maximize space utilisation or occupancy rate"]
+simulator_answer = "We want to get the most total rent money from the stores we lease to."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U2", "U3", "U4"]
+content = "I need help creating a leasing plan for store types in a shopping mall, where for each store type the number of shops must be between the given minimum and maximum (inclusive), and the total area of all leased shops cannot exceed 5000 m².\n\nChangjiang Comprehensive Shopping Mall has 5000 m² of space for lease.\n\nTable 5-12\n\n| Code | Store Type | Area per Shop / m² | Min | Max | 1 Store | 2 Stores | 3 Stores |\n|------|------------|--------------------|-----|-----|---------|----------|----------|\n| 1    | Jewelry    | 250                | 1   | 3   | 9       | 8        | 7        |\n| 2    | Shoes & Hats | 350              | 1   | 2   | 10      | 9        | -        |\n| 3    | General Merchandise | 800      | 1   | 3   | 27      | 21       | 20       |\n| 4    | Bookstore  | 400                | 0   | 2   | 16      | 10       | -        |\n| 5    | Catering   | 500                | 1   | 3   | 17      | 15       | 12       |\n\nEach store pays 20% of its annual profit as rent to the mall."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

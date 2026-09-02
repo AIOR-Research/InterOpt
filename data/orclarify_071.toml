@@ -1,0 +1,77 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_071"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a factory-to-location assignment plan."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Number of factories: 2, number of locations: 2."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Transportation volume between factory i and factory j is denoted d_{ij}. Unit transportation cost from location p to location q is denoted c_{pq}."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "|        | Transportation volume to Location 1 | Transportation volume to Location 2 | Transportation cost to Location 1 | Transportation cost to Location 2 |\n| :----: | :---------------------------------: | :---------------------------------: | :-------------------------------: | :-------------------------------: |\n| Factory 1 | 10 | 20 | 5 | 8 |\n| Factory 2 | 30 | 40 | 6 | 7 |"
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Minimize the total transportation cost."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Each factory must be assigned to exactly one location."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Each location must be assigned exactly one factory."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without the objective, the agent cannot define a meaningful optimization model; the problem is incomplete and impossible to formulate."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["What is our goal here? Are we minimizing total transportation cost?", "What cost should we minimize?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the optimization objective or the specific cost to be minimized."
+failure_modes = ["Agent assumes a different objective, such as minimizing maximum distance or maximizing throughput, without clarification.", "Agent tries to formulate a feasibility problem with no objective function."]
+simulator_answer = "We want to minimize the total transportation cost."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "bijection_constraint_locations"
+severity = "P1"
+severity_reason = "Without this explicit constraint, the model may assign multiple factories to the same location, violating the intended one-to-one matching and producing an invalid assignment."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Do we need to ensure each location gets exactly one factory?", "Is it a one-to-one assignment where each location receives a factory?"]
+semantic_hit_rule = "The agent's question must explicitly ask whether each location must have exactly one assigned factory, or whether the assignment is a bijection."
+failure_modes = ["Agent assumes locations can be left empty or that multiple factories can be placed at the same location.", "Agent formulates only the constraint that each factory goes to one location, ignoring the location coverage requirement."]
+simulator_answer = "Yes, each location must be assigned exactly one factory."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U2", "U3", "U4"]
+content = "I need help creating a factory-to-location assignment plan where each factory must be assigned to exactly one location.\n\nNumber of factories: 2, number of locations: 2.\n\nTransportation volume between factory i and factory j is denoted d_{ij}. Unit transportation cost from location p to location q is denoted c_{pq}.\n\n|        | Transportation volume to Location 1 | Transportation volume to Location 2 | Transportation cost to Location 1 | Transportation cost to Location 2 |\n| :----: | :---------------------------------: | :---------------------------------: | :-------------------------------: | :-------------------------------: |\n| Factory 1 | 10 | 20 | 5 | 8 |\n| Factory 2 | 30 | 40 | 6 | 7 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

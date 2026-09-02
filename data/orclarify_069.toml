@@ -1,0 +1,72 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_069"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a cutting plan for steel bars."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Required pieces: 90 pieces of length 3 meters, 60 pieces of length 4 meters. Raw material: each steel bar is 10 meters long."
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Minimize total waste of raw material."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Exactly 90 pieces of 3 meters and 60 pieces of 4 meters must be cut."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The total length of pieces cut from a single raw steel bar cannot exceed 10 meters."
+
+[[problem_units]]
+id = "U6"
+kind = "assumption"
+content = "All steel bars have the same diameter, so the cutting problem only depends on length."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "objective_minimize_waste"
+severity = "P0"
+severity_reason = "Without a stated objective, the agent cannot determine whether to minimize waste, cost, or another criterion, so the optimization model is incomplete."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["Just to confirm, the objective is to minimize the total waste from cutting, right?", "Are we aiming to minimize the leftover length across all used raw bars?"]
+semantic_hit_rule = "The agent's question must explicitly confirm or ask about the objective function, specifically mentioning waste reduction or minimization."
+failure_modes = ["Silently assuming the objective is to minimize the number of raw bars used without verifying that waste minimization is the intended measure."]
+simulator_answer = "Yes, we want to minimize the total waste from cutting the raw steel bars."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "exact_demand_constraint"
+severity = "P1"
+severity_reason = "If exact quantities are required, replacing equality with at-least constraints can allow overproduction and materially change the optimal cutting pattern and waste, so clarification is required for a valid model."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["Do I need to cut exactly 90 three-meter and 60 four-meter pieces, or can I cut more?", "Is it acceptable to produce extra pieces, or must production match those exact numbers?"]
+semantic_hit_rule = "The agent's question must inquire whether the required piece counts are exact equality constraints or if overproduction is allowed."
+failure_modes = ["Assuming an exact equality constraint without asking about possible overproduction.", "Assuming at-least constraints are acceptable without checking the shop requirement."]
+simulator_answer = "You must cut exactly those 90 pieces of 3 meters and 60 pieces of 4 meters. No more, no less."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U2"]
+content = "I need help creating a cutting plan for steel bars, where the total length of pieces cut from a single raw steel bar cannot exceed 10 meters. Because all steel bars have the same diameter, the cutting problem only depends on length.\n\nRequired pieces: 90 pieces of length 3 meters, 60 pieces of length 4 meters. Raw material: each steel bar is 10 meters long."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

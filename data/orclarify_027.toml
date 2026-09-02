@@ -1,0 +1,71 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_027"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help arranging a production plan for my factory."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table 1-4\n| Equipment  | Product I | Product II | Product III | Effective Machine Hours | Operating Costs at Full Capacity (Yuan) |\n|------------|-----------|------------|-------------|--------------------------|------------------------------------------|\n| A1         | 5         | 10         |             | 6000                     | 300                                      |\n| A2         | 7         | 9          | 12          | 10000                    | 321                                      |\n| B1         | 6         | 8          |             | 4000                     | 250                                      |\n| B2         | 4         |            | 11          | 7000                     | 783                                      |\n| B3         | 7         |            |             | 4000                     | 200                                      |\n| Raw Material Cost (Yuan/Unit) | 0.25 | 0.35       | 0.50       |                          |                                          |\n| Unit Price (Yuan/Unit)        | 1.25 | 2.00       | 2.80       |                          |                                          |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Maximize the factory's profit."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Each product must be processed through both procedure A and procedure B."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The total processing time assigned to each machine must not exceed its effective machine hours."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Product I can be processed on any equipment for procedure A (A1, A2) and any equipment for procedure B (B1, B2, B3)."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Product II can be processed on any A equipment (A1, A2), but only on B1 for procedure B."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Product III can only be processed on A2 for procedure A and on B2 for procedure B."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "operating_cost_treatment"
+severity = "P1"
+severity_reason = "Without clarifying how the 'operating costs at full capacity' should be included in profit (fixed charge or variable cost), the agent will likely make an arbitrary assumption that materially misstates profit and may lead to incorrect production decisions."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["How should the operating costs at full capacity be incorporated into the profit calculation? Are they fixed charges if a machine is used, or should I compute an hourly cost?", "Do the operating costs at full capacity represent a fixed cost that must be paid if a machine runs at all, or are they proportional to actual machine usage?"]
+semantic_hit_rule = "The Agent's question must explicitly ask how to include the 'Operating Costs at Full Capacity' in profit, specifically referencing whether these are fixed costs or variable costs, or requesting clarification on cost allocation."
+failure_modes = ["Assuming the operating costs are variable and dividing them by effective hours to get an hourly cost without clarification", "Assuming the operating costs are fixed and subtracting them only if the machine is fully utilized", "Omitting operating costs entirely from the profit calculation"]
+simulator_answer = "The operating costs at full capacity are fixed charges. If you use a machine at all during the planning period, you must pay that entire amount. So you'll need to subtract those costs from the total profit for each machine you decide to operate."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U5", "U6", "U7", "U8", "U2"]
+content = "I need help arranging a production plan for my factory. Each product must be processed through both procedure A and procedure B, and the total processing time assigned to each machine must not exceed its effective machine hours. Product I can be processed on any equipment for procedure A (A1, A2) and any equipment for procedure B (B1, B2, B3). Product II can be processed on any A equipment (A1, A2), but only on B1 for procedure B. Product III can only be processed on A2 for procedure A and on B2 for procedure B.\n\nTable 1-4\n| Equipment  | Product I | Product II | Product III | Effective Machine Hours | Operating Costs at Full Capacity (Yuan) |\n|------------|-----------|------------|-------------|--------------------------|------------------------------------------|\n| A1         | 5         | 10         |             | 6000                     | 300                                      |\n| A2         | 7         | 9          | 12          | 10000                    | 321                                      |\n| B1         | 6         | 8          |             | 4000                     | 250                                      |\n| B2         | 4         |            | 11          | 7000                     | 783                                      |\n| B3         | 7         |            |             | 4000                     | 200                                      |\n| Raw Material Cost (Yuan/Unit) | 0.25 | 0.35       | 0.50       |                          |                                          |\n| Unit Price (Yuan/Unit)        | 1.25 | 2.00       | 2.80       |                          |                                          |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,87 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_012"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for Red Star Plastics Factory."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "**Table 5-11: Container Data**\n| Container Type (Code)             | 1    | 2    | 3    | 4    | 5    | 6     |\n| :------------------------------ | :--- | :--- | :--- | :--- | :--- | :---- |\n| Volume ($\\text{cm}^3$)             | 1500 | 2500 | 4000 | 6000 | 9000 | 12000 |\n| Market Demand (units)           | 500  | 550  | 700  | 900  | 400  | 300   |\n| Unit Variable Production Cost (Yuan/unit) | 5    | 8    | 10   | 12   | 16   | 18    |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Each container type requires its own dedicated specialized equipment."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Fixed setup cost for activating the specialized equipment of a container type: 1200 Yuan."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "For each container type, if its production quantity is greater than zero, the equipment is activated (incurring the fixed setup cost)."
+
+[[problem_units]]
+id = "U6"
+kind = "assumption"
+content = "The container type codes are pre-sorted in ascending order of their volumes (type 1 smallest, type 6 largest)."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Substitution is allowed only from a container type with equal or larger volume to a demand type with equal or smaller volume. A larger container can satisfy demand of a smaller container type, but not vice versa."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The total demand for each container type must be fully met, either by direct production of that type or by substitution from larger/equal volume types."
+
+[[problem_units]]
+id = "U9"
+kind = "objective"
+content = "Minimize total cost: sum of variable production costs (unit variable cost × production quantity) for all container types plus sum of fixed setup costs for all activated equipment."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "demand_fulfillment_required"
+severity = "P0"
+severity_reason = "Without the constraint that all demand must be fully met, the cost minimization problem becomes trivial (produce nothing, zero cost), making the model ill‐posed and impossible to solve meaningfully."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["Do we need to satisfy all demand completely, or can some demand go unmet?", "Is it mandatory that the demand for each container type is entirely fulfilled?"]
+semantic_hit_rule = "The Agent's question must inquire about whether demand must be fully satisfied, or whether there are any demand constraints."
+failure_modes = ["Assuming that the factory only needs to produce up to some demand and that leaving demand unfilled is allowed, potentially leading to a zero‐production optimum.", "Assuming demand only has to be met directly, ignoring the substitution flexibility with larger containers.", "Inventing a profit maximization problem where unsatisfied demand is not penalized."]
+simulator_answer = "Yes, all demand for every container type must be fully met, no exceptions. You can fill that demand either by producing the container type itself or by substituting with a larger container, but every unit of demand must be covered."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "minimize_total_cost_objective"
+severity = "P0"
+severity_reason = "Without a defined objective, the optimization model cannot be formulated; the agent would be unable to determine what to optimize, making modeling impossible."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["What exactly is the objective? Are we minimizing total cost, and does that include both variable production cost and fixed setup cost?", "Should we minimize the sum of variable costs and equipment activation costs?"]
+semantic_hit_rule = "The Agent's question must ask about the components of the objective function (variable costs and/or fixed costs) or about what exactly to minimize."
+failure_modes = ["Assuming the goal is to minimize only variable production costs, ignoring the fixed setup costs entirely.", "Assuming the objective is to maximize profit (revenue minus cost) instead of pure cost minimization.", "Treating fixed setup costs as variable or spreading them across units without proper activation indicators."]
+simulator_answer = "The goal is to minimize the total cost, which is the sum of variable production cost for each container made plus the fixed setup cost of 1200 Yuan for any container type we decide to produce."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U7", "U2", "U3", "U4"]
+content = "I need help creating a production plan for Red Star Plastics Factory. The container type codes are pre-sorted in ascending order of their volumes (type 1 smallest, type 6 largest). Substitution is allowed only from a container type with equal or larger volume to a demand type with equal or smaller volume; a larger container can satisfy demand of a smaller container type, but not vice versa. For each container type, if its production quantity is greater than zero, the equipment is activated (incurring the fixed setup cost).\n\n**Table 5-11: Container Data**\n| Container Type (Code)             | 1    | 2    | 3    | 4    | 5    | 6     |\n| :------------------------------ | :--- | :--- | :--- | :--- | :--- | :---- |\n| Volume ($\\text{cm}^3$)             | 1500 | 2500 | 4000 | 6000 | 9000 | 12000 |\n| Market Demand (units)           | 500  | 550  | 700  | 900  | 400  | 300   |\n| Unit Variable Production Cost (Yuan/unit) | 5    | 8    | 10   | 12   | 16   | 18    |\n\nEach container type requires its own dedicated specialized equipment.\n\nFixed setup cost for activating the specialized equipment of a container type: 1200 Yuan."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

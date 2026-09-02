@@ -1,0 +1,180 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_028"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating an investment plan over three years."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Initial fund: 300,000 yuan."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Annual profit of project (1): 20% of the investment amount."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Total return of project (2): 150% of the investment amount."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Investment limit for project (2): 150,000 yuan."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Total return of project (3): 160% of the investment amount."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Investment limit for project (3): 200,000 yuan."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Profit of project (4): 40% of the investment amount."
+
+[[problem_units]]
+id = "U9"
+kind = "data"
+content = "Investment limit for project (4): 100,000 yuan."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Investment in project (2) cannot exceed 150,000 yuan."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "Investment in project (3) cannot exceed 200,000 yuan."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "Investment in project (4) cannot exceed 100,000 yuan."
+
+[[problem_units]]
+id = "U13"
+kind = "constraint"
+content = "Investment in project (1) can be made at the beginning of any of the three years."
+
+[[problem_units]]
+id = "U14"
+kind = "constraint"
+content = "The principal and interest from project (1) can be reinvested in the following year."
+
+[[problem_units]]
+id = "U15"
+kind = "constraint"
+content = "Investment in project (2) is only allowed at the beginning of the first year."
+
+[[problem_units]]
+id = "U16"
+kind = "constraint"
+content = "Investment in project (2) can be recovered at the end of the second year."
+
+[[problem_units]]
+id = "U17"
+kind = "constraint"
+content = "Investment in project (3) is allowed at the beginning of the second year."
+
+[[problem_units]]
+id = "U18"
+kind = "constraint"
+content = "Investment in project (3) can be recovered at the end of the third year."
+
+[[problem_units]]
+id = "U19"
+kind = "constraint"
+content = "Investment in project (4) is allowed at the beginning of the third year."
+
+[[problem_units]]
+id = "U20"
+kind = "constraint"
+content = "Investment in project (4) can be recovered at the end of the third year."
+
+[[problem_units]]
+id = "U21"
+kind = "objective"
+content = "Maximize the total principal and interest at the end of the third year."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "project1_investment_timing"
+severity = "P1"
+severity_reason = "Without this constraint, the agent might assume project (1) investment is restricted to a specific year, missing the multi-year flexibility that influences the entire cash flow and reinvestment strategy."
+problem_unit_id = "U13"
+reference_acceptable_questions = ["Is it possible to invest in project (1) at the beginning of any of the three years, or only in certain years?", "When exactly can I put money into project (1)? Only at the start of the first year, or also in year 2 and 3?"]
+semantic_hit_rule = "Agent asks whether project (1) investment is allowed at the beginning of multiple years, demonstrating an understanding that the timing might be flexible."
+failure_modes = ["Assume project (1) can only be invested at the beginning of the first year.", "Assume project (1) can be invested only once, at any year but not multiple times."]
+simulator_answer = "Yes, you can invest in project (1) at the beginning of any of the three years."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "project1_reinvestment_rule"
+severity = "P1"
+severity_reason = "If the agent assumes no reinvestment of project (1) returns, the model will miss the compounding effect and produce a suboptimal plan, fundamentally altering the objective's attainment."
+problem_unit_id = "U14"
+reference_acceptable_questions = ["After I get the profit and principal back from a project (1) investment at the end of a year, can I reinvest that total amount in the next year?", "Are the returns from project (1) available for reinvestment in subsequent years, or is that money no longer usable?"]
+semantic_hit_rule = "Agent asks explicitly about whether the proceeds (principal + interest) from project (1) are reinvestable in the following year, or queries the cash flow availability for reinvestment."
+failure_modes = ["Assume principal and interest are only received at the end of year 3 and cannot be reinvested.", "Assume the interest can be reinvested but the principal must remain separate."]
+simulator_answer = "Yes, the entire amount—both your original investment and the 20% profit—can be reinvested in any project the next year."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "project2_recovery_timing"
+severity = "P1"
+severity_reason = "Incorrect assumption about when project (2) funds are recovered would misalign cash inflows in the time-stage model, leading to errors in investment opportunity feasibility."
+problem_unit_id = "U16"
+reference_acceptable_questions = ["When exactly do I get back the money from project (2)? Is it at the end of the second year?", "For the second investment option, when can I access the total principal and interest—at the end of year 2?"]
+semantic_hit_rule = "Agent asks about the specific recovery date of project (2) relative to the year boundaries, confirming it is at the end of year 2."
+failure_modes = ["Assume project (2) is recovered at the end of the first year.", "Assume project (2) is recovered at the end of the third year."]
+simulator_answer = "The investment in project (2) will be recovered at the end of the second year."
+
+[[hidden_slots]]
+slot_id = "H4"
+name = "project3_investment_timing"
+severity = "P1"
+severity_reason = "If the agent assumes unrestricted timing for project (3), the model becomes overly permissive and may suggest investments in years that are not actually allowed, yielding an invalid plan."
+problem_unit_id = "U17"
+reference_acceptable_questions = ["Is project (3) only available for investment at the start of the second year, or can I also invest in it earlier or later?", "Can I invest in project (3) in the first year, or is it strictly the second year?"]
+semantic_hit_rule = "Agent asks whether project (3) investment is restricted to the beginning of the second year only, as opposed to being available in other years."
+failure_modes = ["Assume project (3) can be invested at the beginning of any year.", "Assume project (3) can only be invested at the beginning of the third year."]
+simulator_answer = "You can only invest in project (3) at the beginning of the second year."
+
+[[hidden_slots]]
+slot_id = "H5"
+name = "project4_investment_timing"
+severity = "P1"
+severity_reason = "Without this timing restriction, the agent might include project (4) in earlier years, creating an infeasible or overly optimistic plan that violates the actual investment window."
+problem_unit_id = "U19"
+reference_acceptable_questions = ["Is it correct that I can only invest in project (4) at the beginning of the third year?", "Does project (4) only accept investments at the start of year 3, or could I invest earlier?"]
+semantic_hit_rule = "Agent asks to confirm that project (4) investment is only permitted at the beginning of the third year."
+failure_modes = ["Assume project (4) is available for investment at the beginning of any year.", "Assume project (4) can be invested in the second year as well."]
+simulator_answer = "That's right, you can only invest in project (4) at the beginning of the third year."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U10", "U11", "U12", "U15", "U18", "U20", "U21", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9"]
+content = "I need help creating an investment plan over three years, aiming to maximize the total principal and interest at the end of the third year. Investment in project (2) cannot exceed 150,000 yuan and is only allowed at the beginning of the first year. Investment in project (3) cannot exceed 200,000 yuan and can be recovered at the end of the third year, while investment in project (4) cannot exceed 100,000 yuan and can also be recovered at that time.\n\nInitial fund: 300,000 yuan.\n\nAnnual profit of project (1): 20% of the investment amount.\n\nTotal return of project (2): 150% of the investment amount.\n\nInvestment limit for project (2): 150,000 yuan.\n\nTotal return of project (3): 160% of the investment amount.\n\nInvestment limit for project (3): 200,000 yuan.\n\nProfit of project (4): 40% of the investment amount.\n\nInvestment limit for project (4): 100,000 yuan."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

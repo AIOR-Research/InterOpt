@@ -1,0 +1,92 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_099"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help deciding the number of spare parts to install for each component in an electronic system."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Number of Spares | Component 1 | Component 2 | Component 3 |\n|------------------|--------------|--------------|--------------|\n| 0                | 0.5          | 0.6          | 0.7          |\n| 1                | 0.6          | 0.75         | 0.9          |\n| 2                | 0.7          | 0.95         | 1.0          |\n| 3                | 0.8          | 1.0          | 1.0          |\n| 4                | 0.9          | 1.0          | 1.0          |\n| 5                | 1.0          | 1.0          | 1.0          |\n| Unit Price (yuan)| 20           | 30           | 40           |\n| Unit Weight (kg) | 2            | 4            | 6            |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Total budget limit: 150 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Total weight limit: 20 kg."
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Maximize the system's operational reliability."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Total cost of installed spare parts must not exceed the total budget."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Total weight of installed spare parts must not exceed the total weight limit."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The number of spare parts installed for any component must be a non-negative integer."
+
+[[problem_units]]
+id = "U9"
+kind = "assumption"
+content = "The system operates normally if all three components function properly."
+
+[[problem_units]]
+id = "U10"
+kind = "assumption"
+content = "The system's operational reliability is the product of the reliabilities of each component."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without this, the modeling agent has no goal function, making it impossible to formulate an optimization problem."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["What is the objective we are trying to optimize?", "Are we maximizing reliability or something else?"]
+semantic_hit_rule = "The agent's question must ask about the optimization objective, such as maximizing reliability or minimizing cost."
+failure_modes = ["Assuming the goal is to minimize total cost", "Assuming the goal is to maximize reliability without clarifying"]
+simulator_answer = "We want to maximize the system's operational reliability."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "component_reliability_combination_rule"
+severity = "P0"
+severity_reason = "Without the rule for combining component reliabilities, the agent cannot compute system reliability or formulate the objective correctly."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["How should the component reliabilities be combined to calculate overall system reliability?", "Should the system reliability be the product of the three component reliabilities?"]
+semantic_hit_rule = "The agent's question must ask how the component reliabilities combine into the system reliability, including whether they should be multiplied."
+failure_modes = ["Adding the component reliabilities instead of multiplying them", "Using the minimum component reliability without clarification", "Assuming a different dependence or aggregation rule"]
+simulator_answer = "The system reliability is the product of the reliabilities of the three components."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U8", "U9", "U2", "U3", "U4"]
+content = "I need help deciding the number of spare parts to install for each component in an electronic system. The system operates normally only when all three components function properly. The decision must satisfy that the total cost of installed spare parts does not exceed the total budget, the total weight does not exceed the total weight limit, and the number of spare parts installed for any component is a non-negative integer.\n\n| Number of Spares | Component 1 | Component 2 | Component 3 |\n|------------------|--------------|--------------|--------------|\n| 0                | 0.5          | 0.6          | 0.7          |\n| 1                | 0.6          | 0.75         | 0.9          |\n| 2                | 0.7          | 0.95         | 1.0          |\n| 3                | 0.8          | 1.0          | 1.0          |\n| 4                | 0.9          | 1.0          | 1.0          |\n| 5                | 1.0          | 1.0          | 1.0          |\n| Unit Price (yuan)| 20           | 30           | 40           |\n| Unit Weight (kg) | 2            | 4            | 6            |\n\nTotal budget limit: 150 yuan.\n\nTotal weight limit: 20 kg."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

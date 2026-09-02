@@ -1,0 +1,71 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_051"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help deciding whether to hire contract nurses and how many to schedule."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Required number of nurses per time period:\n2:00-6:00: 10\n6:00-10:00: 15\n10:00-14:00: 25\n14:00-18:00: 20\n18:00-22:00: 18\n22:00-2:00: 12"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Shift start times: 2:00, 6:00, 10:00, 14:00, 18:00, 22:00. Each shift lasts 8 continuous hours."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Regular nurse pay: 10 yuan/hour. Contract nurse pay: 15 yuan/hour."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Contract nurses can be hired and work the same shift structure (8-hour shifts at the same start times) as regular nurses."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "During each time period, the total number of nurses on duty must be at least the required number for that period."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Each nurse assigned to a shift works continuously for 8 hours, covering the appropriate time intervals."
+
+[[problem_units]]
+id = "U8"
+kind = "objective"
+content = "Minimize total nurse payroll cost."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "minimize_total_payroll_cost"
+severity = "P1"
+severity_reason = "Without explicitly knowing the objective is to minimize total nurse payroll cost, an agent might assume a different goal (e.g., minimize number of nurses or minimize number of contract nurses). Clarifying this ensures the model correctly accounts for the cost differential between regular and contract nurses."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["What is the objective of the optimization? Should I minimize total cost?", "Are we trying to minimize the total nurse payroll cost, or is there another metric?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about the optimization objective, specifically whether the goal is to minimize total payroll cost, or what quantity should be minimized."
+failure_modes = ["Silent incorrect assumption: assuming the objective is to minimize the total number of nurses rather than cost.", "Silent incorrect assumption: assuming the objective is to minimize the number of contract nurses hired.", "Proceeding to model without clarifying the objective, resulting in a model that does not optimize total payroll cost."]
+simulator_answer = "Our main goal is to keep the total payroll cost as low as possible, so we want to minimize the sum of wages for all nurses on duty."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U2", "U3", "U4", "U5"]
+content = "I need help deciding whether to hire contract nurses and how many to schedule, given that during each time period, the total number of nurses on duty must be at least the required number for that period, and each nurse assigned to a shift works continuously for 8 hours, covering the appropriate time intervals.\n\nRequired number of nurses per time period:\n2:00-6:00: 10\n6:00-10:00: 15\n10:00-14:00: 25\n14:00-18:00: 20\n18:00-22:00: 18\n22:00-2:00: 12\n\nShift start times: 2:00, 6:00, 10:00, 14:00, 18:00, 22:00. Each shift lasts 8 continuous hours.\n\nRegular nurse pay: 10 yuan/hour. Contract nurse pay: 15 yuan/hour.\n\nContract nurses can be hired and work the same shift structure (8-hour shifts at the same start times) as regular nurses."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

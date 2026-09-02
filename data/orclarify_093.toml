@@ -1,0 +1,107 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_093"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan for a dairy processing plant."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "One barrel of milk processed on Type A equipment yields 3 kg of A1 in 12 hours."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "One barrel of milk processed on Type B equipment yields 4 kg of A2 in 8 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Profit: 24 yuan per kg of A1, 16 yuan per kg of A2."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Daily milk supply: 50 barrels."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Total labor time available daily: 480 hours."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Type A equipment maximum processing quantity: 100 kg of A1 per day."
+
+[[problem_units]]
+id = "U8"
+kind = "assumption"
+content = "All produced A1 and A2 can be sold (market demand is unlimited)."
+
+[[problem_units]]
+id = "U9"
+kind = "assumption"
+content = "Type B equipment has no processing capacity limitation."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Daily production quantity of A1 must not exceed the Type A equipment capacity of 100 kg."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "Total barrels of milk used per day (for A1 and A2) cannot exceed 50 barrels."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "Total labor hours consumed per day (12 hours per barrel for A1, 8 hours per barrel for A2) cannot exceed 480 hours."
+
+[[problem_units]]
+id = "U13"
+kind = "objective"
+content = "Maximize total daily profit."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unknown_typeB_capacity_limit"
+severity = "P1"
+severity_reason = "Without this information, an agent could assume Type B equipment has a capacity limit when in fact it does not, potentially adding an unnecessary constraint that alters the optimal solution or leads to an overly restrictive model. Clarification ensures the correct feasible region."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["What is the processing capacity of Type B equipment? Is there any limit?", "Does Type B equipment have a maximum daily processing quantity?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the existence or value of a capacity limit for Type B equipment."
+failure_modes = ["Assuming Type B equipment has the same capacity as Type A (100 kg/day) and adding a constraint for it.", "Assuming Type B equipment has no capacity limit without clarification, but proceeding to model as if it's known."]
+simulator_answer = "The Type B equipment doesn't have a capacity limit; you can process as much as you need on it."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without a clear objective, the optimization problem is undefined. The agent cannot formulate a meaningful mathematical model because it would not know what to maximize or minimize. This is a fatal gap."
+problem_unit_id = "U13"
+reference_acceptable_questions = ["What are we trying to maximize? Is it daily profit?", "What is the objective of the production plan? Are we maximizing profit?"]
+semantic_hit_rule = "The agent's question must ask about the objective function, specifically whether it is profit maximization or another goal."
+failure_modes = ["Proceeding to build a model without specifying any objective.", "Assuming the goal is to maximize revenue or minimize cost instead of profit."]
+simulator_answer = "Our goal is to maximize the total profit per day from selling A1 and A2."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U8", "U10", "U11", "U12", "U2", "U3", "U4", "U5", "U6", "U7"]
+content = "I need help creating a production plan for a dairy processing plant, where all produced A1 and A2 can be sold as market demand is unlimited, but daily production of A1 must not exceed the Type A equipment capacity of 100 kg, total barrels of milk used per day for A1 and A2 cannot exceed 50 barrels, and total labor hours consumed per day (12 hours per barrel for A1, 8 hours per barrel for A2) cannot exceed 480 hours.\n\nOne barrel of milk processed on Type A equipment yields 3 kg of A1 in 12 hours.\n\nOne barrel of milk processed on Type B equipment yields 4 kg of A2 in 8 hours.\n\nProfit: 24 yuan per kg of A1, 16 yuan per kg of A2.\n\nDaily milk supply: 50 barrels.\n\nTotal labor time available daily: 480 hours.\n\nType A equipment maximum processing quantity: 100 kg of A1 per day."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

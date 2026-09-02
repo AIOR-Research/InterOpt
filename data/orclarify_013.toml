@@ -1,0 +1,82 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_013"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help deciding how to allocate acres to corn, wheat, soybeans, and sorghum."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Profit per acre for planting crops: corn $1500, wheat $1200, soybeans $1800, sorghum $1600."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Tom and Jerry’s farm has a total area of 100 acres."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "The total land area used for all crops cannot exceed 100 acres."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The land area used for planting corn must be at least twice the land area used for planting wheat."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The land area used for planting soybeans must be at least half the land area used for planting sorghum."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The land area used for planting wheat must be three times the land area used for planting sorghum."
+
+[[problem_units]]
+id = "U8"
+kind = "objective"
+content = "Maximize the total profit."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "corn_minimum_twice_wheat"
+severity = "P1"
+severity_reason = "Without this constraint, the model would not enforce a key business rule linking corn and wheat acreages, leading to a materially different allocation and profit."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Is there a requirement that the corn acreage be at least double the wheat acreage?", "Do you have any rule relating corn and wheat, for instance that corn must be at least twice wheat?"]
+semantic_hit_rule = "The agent asks whether there is a minimum ratio or multiplier linking corn and wheat acreage, or specifically inquires about a constraint like corn >= 2 * wheat."
+failure_modes = ["Assuming no relationship between corn and wheat acreages", "Assuming corn and wheat can be planted independently without any relative size restriction"]
+simulator_answer = "The land used for corn must be at least twice the land used for wheat."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "wheat_three_times_sorghum"
+severity = "P1"
+severity_reason = "Omitting this fixed ratio between wheat and sorghum changes the feasible region and profit outcome, making the model inconsistent with the intended farm plan."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Is there a prescribed relationship between wheat and sorghum acres, for example that wheat should be three times sorghum?", "Do you require the wheat area to be exactly three times the sorghum area?"]
+semantic_hit_rule = "The agent asks if wheat and sorghum acreages are linked by a fixed ratio, or specifically inquires about a constraint like wheat = 3 * sorghum."
+failure_modes = ["Assuming wheat and sorghum acreages are independent", "Assuming soybean-sorghum ratio is the only relational constraint"]
+simulator_answer = "The land area used for planting wheat must be three times the land area used for planting sorghum."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U6", "U8", "U2", "U3"]
+content = "I need help deciding how to allocate acres to corn, wheat, soybeans, and sorghum to maximize the total profit, given that the total land area used for all crops cannot exceed 100 acres and the land area used for planting soybeans must be at least half the land area used for planting sorghum.\n\nProfit per acre for planting crops: corn $1500, wheat $1200, soybeans $1800, sorghum $1600.\n\nTom and Jerry’s farm has a total area of 100 acres."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

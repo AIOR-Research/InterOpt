@@ -1,0 +1,135 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_077"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning the processing of parts on machines."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Unit processing costs:\nTable 5-6\n| Machine/Part | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  |\n|--------------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|\n| A            | $10$ | $20$ | $30$ | $40$ | $50$ | $60$ | $70$ | $80$ | $90$ | $100$ |\n| B            | $15$ | $25$ | $35$ | $45$ | $55$ | $65$ | $75$ | $85$ | $95$ | $105$ |\n| C            | $20$ | $30$ | $40$ | $50$ | $60$ | $70$ | $80$ | $90$ | $100$ | $110$ |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Setup costs: d_A = 100, d_B = 135, d_C = 200 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize the total cost (processing costs plus setup costs)."
+
+[[problem_units]]
+id = "U5"
+kind = "assumption"
+content = "A one-time setup cost is incurred for a machine if at least one part is processed on it, independent of the number of part types."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "One piece of each of the 10 types of parts needs to be processed."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "If part 1 is processed on machine A, then part 2 must be processed on machine B or C."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "If part 1 is processed on machine B or C, then part 2 must be processed on machine A."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Part 3 must be processed on machine A."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Part 4 must be processed on machine B."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "Part 5 must be processed on machine C."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "The number of parts processed on machine C should not exceed 3 types."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without knowing the objective, the agent cannot define what to minimize/maximize, making it impossible to build a valid optimization model."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What is the goal of this planning? Should we minimize cost, time, or something else?", "Do we want to minimize the total cost, and does that include both processing and setup costs?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the objective or what is to be minimized/maximized in the problem."
+failure_modes = ["Assuming the problem is only about minimizing processing cost, ignoring setup costs.", "Assuming the goal is to minimize the number of machines used."]
+simulator_answer = "We want to minimize the total cost, which includes both the processing costs per part on each machine and any one-time setup costs if a machine is used."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "exactly_one_piece_per_part"
+severity = "P0"
+severity_reason = "Without this constraint, the agent would not know the required quantity of each part, making the problem fundamentally ambiguous and the model invalid."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["How many pieces of each part type are required? Just one piece per type?", "Do we need to process exactly one unit of each of the ten parts, or can we process multiple or zero?"]
+semantic_hit_rule = "The agent's question must ask about the quantity or number of pieces of each part to be processed, specifically referencing the ten part types."
+failure_modes = ["Assuming that some parts may not need to be processed.", "Assuming multiple pieces per part type are allowed."]
+simulator_answer = "You need to process exactly one piece of each of the ten part types. So one unit of every part type must be produced."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "reverse_conditional_part1_part2"
+severity = "P1"
+severity_reason = "Without this reverse conditional, the relationship between parts 1 and 2 is only half-specified, which would lead to a materially inaccurate feasible region in the model."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["Is there any rule for part 2 when part 1 is on machine B or C?", "Does it also work the other way? If part 1 is on B or C, must part 2 be on A?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the machine assignment for part 2 when part 1 is processed on machine B or C."
+failure_modes = ["Assuming no restriction applies to part 2 when part 1 is on B or C.", "Assuming the conditional only applies when part 1 is on machine A."]
+simulator_answer = "Yes, there's a corresponding rule: if part 1 is processed on machine B or C, then part 2 must be processed on machine A."
+
+[[hidden_slots]]
+slot_id = "H4"
+name = "part3_on_machine_A"
+severity = "P1"
+severity_reason = "This is a hard assignment constraint; missing it would produce a model that allows invalid machine choices, leading to solutions that do not reflect the real requirement."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["Is part 3 required to be processed on a specific machine?", "Do we have a fixed machine for part 3?"]
+semantic_hit_rule = "The agent's question must ask about a mandatory machine assignment for part 3 (or the third part)."
+failure_modes = ["Assuming part 3 can be assigned to any machine.", "Assuming part 3 must be processed on machine B or C."]
+simulator_answer = "Part 3 has to be processed on machine A, that's a fixed requirement."
+
+[[hidden_slots]]
+slot_id = "H5"
+name = "part5_on_machine_C"
+severity = "P1"
+severity_reason = "This fixed assignment directly restricts the solution space; without it the model would not enforce the intended machine choice and would produce incorrect solutions."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Is there a prescribed machine for part 5?", "Must part 5 be on machine C?"]
+semantic_hit_rule = "The agent's question must ask about a specific machine requirement for part 5 (or the fifth part)."
+failure_modes = ["Assuming part 5 can be processed on any machine.", "Assuming part 5 must be on machine A or B."]
+simulator_answer = "Part 5 must be processed on machine C, that is a strict rule."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U7", "U10", "U12", "U2", "U3"]
+content = "I need help planning the processing of parts on machines. A one-time setup cost is incurred for a machine if at least one part is processed on it, independent of the number of part types. Additionally, if part 1 is processed on machine A, then part 2 must be processed on machine B or C. Part 4 must be processed on machine B, and the number of parts processed on machine C should not exceed 3 types.\n\nUnit processing costs:\nTable 5-6\n| Machine/Part | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  |\n|--------------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|\n| A            | $10$ | $20$ | $30$ | $40$ | $50$ | $60$ | $70$ | $80$ | $90$ | $100$ |\n| B            | $15$ | $25$ | $35$ | $45$ | $55$ | $65$ | $75$ | $85$ | $95$ | $105$ |\n| C            | $20$ | $30$ | $40$ | $50$ | $60$ | $70$ | $80$ | $90$ | $100$ | $110$ |\n\nSetup costs: d_A = 100, d_B = 135, d_C = 200 yuan."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

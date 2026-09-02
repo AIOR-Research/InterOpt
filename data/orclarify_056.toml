@@ -1,0 +1,108 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_056"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a grain purchasing and selling plan for the first quarter."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Initial inventory on January 1: 1000 dan."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Initial funds on January 1: 20,000 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Warehouse capacity: 5000 dan."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Table 1-8: Estimated grain prices (yuan/dan) for the first quarter\n| Month | Purchase Price | Selling Price |\n|-------|---------------|---------------|\n| 1     | 2.85          | 3.10          |\n| 2     | 3.05          | 3.25          |\n| 3     | 2.90          | 2.95          |"
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Grains purchased in a given month are delivered in that same month."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Grains can only be sold in the month immediately following their purchase."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Payment for purchased grains is required upon delivery (i.e., in the month of purchase)."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Ending inventory at the end of the quarter (after month 3) must be 2000 dan."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The total amount of grain stored in the warehouse at any time cannot exceed the warehouse capacity of 5000 dan."
+
+[[problem_units]]
+id = "U11"
+kind = "objective"
+content = "Maximize total profit over the three months."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "sales_only_in_following_month"
+severity = "P1"
+severity_reason = "Without this constraint, the agent might assume grain can be sold in the same month as purchase, which would overestimate profit and lead to a materially inaccurate model."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Is it allowed to sell grain in the same month we buy it, or must it be held until the next month?", "Can we sell grain right away, or do we have to wait until the following month?"]
+semantic_hit_rule = "The agent's question must inquire about the timing of sales relative to the purchase month, specifically whether sales can occur in the purchase month or must be deferred to the next month."
+failure_modes = ["Assuming grain can be sold immediately in the month of purchase.", "Assuming there is no restriction on sale timing."]
+simulator_answer = "You can only sell the grain in the month right after you buy it. So if you buy in January, you can sell it in February, not before."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "immediate_payment_on_delivery"
+severity = "P1"
+severity_reason = "Omitting the requirement that payment is due upon delivery would lead the agent to ignore cash flow constraints, potentially resulting in infeasible or unrealistic purchasing plans that exceed available funds at specific times."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["When do we need to pay for the grain we buy? Is it upon delivery in the same month?", "Do we pay for purchases immediately, or can we delay payment?"]
+semantic_hit_rule = "The agent must ask about the timing of payment for purchases, specifically whether payment is due at delivery or in the purchase month."
+failure_modes = ["Assuming payment can be deferred to a later month.", "Assuming no cash flow restrictions based on purchase timing."]
+simulator_answer = "We have to pay for the grain right when it's delivered, so in the same month we buy it. No credit terms."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "ending_inventory_target"
+severity = "P1"
+severity_reason = "The model would optimize without considering a mandated terminal inventory, leading to a plan that may liquidate stock and differ significantly from the company's goal of ending with 2000 dan."
+problem_unit_id = "U9"
+reference_acceptable_questions = ["Is the ending inventory of 2000 dan a hard requirement or just a hope? Must we have exactly 2000 dan at the end of March?", "Do we need to ensure that we finish the quarter with 2000 dan in stock, or is that just a target?"]
+semantic_hit_rule = "The agent must ask about the requirement regarding the inventory level at the end of the quarter (after month 3), specifically whether it is a target or a strict constraint."
+failure_modes = ["Assuming no requirement on ending inventory and selling all remaining stock.", "Assuming the goal is to maximize profit without any terminal inventory constraint."]
+simulator_answer = "Yes, we want to end the quarter with exactly 2000 dan in inventory. That's a must."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U10", "U11", "U2", "U3", "U4", "U5"]
+content = "I need help creating a grain purchasing and selling plan for the first quarter, where grains purchased in a given month are delivered in that same month, the total amount of grain stored in the warehouse at any time cannot exceed the warehouse capacity of 5000 dan, and the goal is to maximize total profit over the three months.\n\nInitial inventory on January 1: 1000 dan.\n\nInitial funds on January 1: 20,000 yuan.\n\nWarehouse capacity: 5000 dan.\n\nTable 1-8: Estimated grain prices (yuan/dan) for the first quarter\n| Month | Purchase Price | Selling Price |\n|-------|---------------|---------------|\n| 1     | 2.85          | 3.10          |\n| 2     | 3.05          | 3.25          |\n| 3     | 2.90          | 2.95          |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

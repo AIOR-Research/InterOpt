@@ -1,0 +1,91 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_086"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a monthly production plan for Meaties and Yummies dog food."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table B-1 Healthy Pet Foods Data\n\n|                    | Meaties      | Yummies    |\n|--------------------|--------------|------------|\n| Price per pack     | $2.80        | $2.00      |\n| Raw materials      |              |            |\n| - Grains           | 2.0 lbs      | 3.0 lbs    |\n| - Meat             | 3.0 lbs      | 1.5 lbs    |\n| Variable cost      | $0.25/pack   | $0.20/pack |\n| Resources          |              |            |\n| Meaties capacity   | 90,000 packs/month |       |\n| Monthly available grains | 400,000 lbs |      |\n| Monthly available meat | 300,000 lbs |        |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "The price of grains is $0.20 per pound."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "The price of meat is $0.50 per pound."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Monthly available grains: 400,000 lbs."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Monthly available meat: 300,000 lbs."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Meaties capacity: 90,000 packs per month."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Total pounds of grains used per month cannot exceed 400,000 lbs."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Total pounds of meat used per month cannot exceed 300,000 lbs."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Monthly production of Meaties cannot exceed 90,000 packs."
+
+[[problem_units]]
+id = "U11"
+kind = "objective"
+content = "Maximize total profit."
+
+[[problem_units]]
+id = "U12"
+kind = "assumption"
+content = "Any quantity of dog food produced can be sold."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without a defined objective, the modeling agent cannot formulate a meaningful optimization problem; it would be impossible to determine what to optimize, making the problem ill‑posed."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["What are we trying to maximize – is it profit, revenue, something else?", "Could you clarify the objective? Are we aiming to maximize total profit, and if so, how is profit defined?"]
+semantic_hit_rule = "The agent must ask a question that explicitly seeks the optimization objective, e.g., what quantity to maximize or minimize, or whether profit maximization is the goal."
+failure_modes = ["Assuming the objective is to maximize revenue", "Assuming the objective is to minimize total cost", "Proceeding to build a model without asking about the objective"]
+simulator_answer = "We want to maximize the total profit of the dog food department."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U8", "U9", "U10", "U12", "U2", "U3", "U4", "U5", "U6", "U7"]
+content = "I need help creating a monthly production plan for Meaties and Yummies dog food, where total pounds of grains used per month cannot exceed 400,000 lbs, total pounds of meat used per month cannot exceed 300,000 lbs, and monthly production of Meaties cannot exceed 90,000 packs, and it is assumed that any quantity of dog food produced can be sold.\n\nTable B-1 Healthy Pet Foods Data\n\n|                    | Meaties      | Yummies    |\n|--------------------|--------------|------------|\n| Price per pack     | $2.80        | $2.00      |\n| Raw materials      |              |            |\n| - Grains           | 2.0 lbs      | 3.0 lbs    |\n| - Meat             | 3.0 lbs      | 1.5 lbs    |\n| Variable cost      | $0.25/pack   | $0.20/pack |\n| Resources          |              |            |\n| Meaties capacity   | 90,000 packs/month |       |\n| Monthly available grains | 400,000 lbs |      |\n| Monthly available meat | 300,000 lbs |        |\n\nThe price of grains is $0.20 per pound.\n\nThe price of meat is $0.50 per pound.\n\nMonthly available grains: 400,000 lbs.\n\nMonthly available meat: 300,000 lbs.\n\nMeaties capacity: 90,000 packs per month."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

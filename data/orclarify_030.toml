@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_030"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning a daily feed selection for an animal that meets its nutritional requirements."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Daily nutritional requirements: at least 700 g of protein, 30 g of minerals, and 100 mg of vitamins."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Nutritional content and price per gram of each feed (Table 1-6):\n| Feed | Protein (g) | Minerals (g) | Vitamins (mg) | Price (¥/kg) | Feed | Protein (g) | Minerals (g) | Vitamins (mg) | Price (¥/kg) |\n|------|-------------|--------------|---------------|--------------|------|-------------|--------------|---------------|--------------|\n| 1    | 3           | 1            | 0.5           | 0.2          | 4    | 6           | 2            | 2             | 0.3          |\n| 2    | 2           | 0.5          | 1             | 0.7          | 5    | 18          | 0.5          | 0.8           | 0.8          |\n| 3    | 1           | 0.2          | 0.2           | 0.4          |      |             |              |               |              |"
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize total cost of selecting the feed."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Total protein from the selected feeds must be at least 700 g."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Total minerals from the selected feeds must be at least 30 g."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Total vitamins from the selected feeds must be at least 100 mg."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective_function"
+severity = "P0"
+severity_reason = "Without knowing the objective, the modeling agent cannot define the optimization direction. The problem does not specify whether to minimize cost, maximize nutritional content, or something else. A responsible agent must clarify this before formulating the model."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What is the goal of the feeding plan? Are we minimizing cost or something else?", "Should we minimize the total cost of the selected feeds?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the optimization objective, such as what we are trying to minimize or maximize, or specifically mention whether cost is being minimized."
+failure_modes = ["Silent incorrect assumption that the objective is to minimize total cost.", "Silent incorrect assumption that the objective is to minimize total feed weight."]
+simulator_answer = "We want to minimize the total cost of the feed we select for the daily ration."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U7", "U2", "U3"]
+content = "I need help planning a daily feed selection for an animal that meets its nutritional requirements, where total protein from the selected feeds must be at least 700 g, total minerals must be at least 30 g, and total vitamins must be at least 100 mg.\n\nDaily nutritional requirements: at least 700 g of protein, 30 g of minerals, and 100 mg of vitamins.\n\nNutritional content and price per gram of each feed (Table 1-6):\n| Feed | Protein (g) | Minerals (g) | Vitamins (mg) | Price (¥/kg) | Feed | Protein (g) | Minerals (g) | Vitamins (mg) | Price (¥/kg) |\n|------|-------------|--------------|---------------|--------------|------|-------------|--------------|---------------|--------------|\n| 1    | 3           | 1            | 0.5           | 0.2          | 4    | 6           | 2            | 2             | 0.3          |\n| 2    | 2           | 0.5          | 1             | 0.7          | 5    | 18          | 0.5          | 0.8           | 0.8          |\n| 3    | 1           | 0.2          | 0.2           | 0.4          |      |             |              |               |              |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

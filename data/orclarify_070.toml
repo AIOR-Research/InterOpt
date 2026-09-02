@@ -1,0 +1,88 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_070"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning a route for a traveling salesman to visit multiple cities."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| City |    1    |    2    |    3    |    4    |\n| ---- | ------ | ------ | ------ | ------ |\n| 1    | 0    | 10   | 20   | 12   |\n| 2    | 10   | 0    | 5    | 10   |\n| 3    | 20   | 5    | 0    | 8    |\n| 4    | 15   | 12   | 8    | 0    |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Minimize the total distance."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "The traveling salesman departs from a certain city."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "He must visit two other cities to sell merchandise."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "He must visit each city exactly once."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "He must return to the original starting city."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_starting_city"
+severity = "P1"
+severity_reason = "Without knowing the specific starting city, the modeling agent cannot determine the exact route, even though the optimal tour distance is independent of starting point in a symmetric TSP. However, the problem explicitly asks for a route, so the starting city is important to specify."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["Which city does the salesman start from?", "Is the starting city specified?"]
+semantic_hit_rule = "The agent's question must ask for the identity of the starting city or whether the starting city is given."
+failure_modes = ["Assuming the starting city is city 1 by default", "Assuming the starting city can be chosen arbitrarily"]
+simulator_answer = "He departs from a certain city, but the problem statement doesn't specify which city that is."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "number_of_cities_to_visit"
+severity = "P0"
+severity_reason = "The phrase 'visit two other cities' directly conflicts with the requirement to 'visit each city exactly once' when there are four cities. Without clarification, the constraint set is contradictory, making a valid model impossible."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Does the salesman need to visit all four cities exactly once, or only two other cities besides the starting city?", "The problem mentions visiting two other cities but also visiting each city exactly once; could you clarify how many cities he actually visits?"]
+semantic_hit_rule = "The agent's question must address the discrepancy between 'two other cities' and 'each city exactly once' or ask for the total number of cities to be visited."
+failure_modes = ["Assuming only three cities are involved (start + two selling cities), ignoring other cities", "Assuming all four cities must be visited despite the mention of only two selling cities, rewriting the problem", "Supplying a model that is internally inconsistent"]
+simulator_answer = "The problem says he must visit two other cities to sell merchandise, and also that he must visit each city exactly once. It doesn't give any further clarification on that point."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "visit_each_city_exactly_once"
+severity = "P2"
+severity_reason = "The requirement that each city is visited exactly once is a standard TSP constraint. While it is essential, the typical interpretation is clear and unlikely to be misunderstood, so clarifying it is not critical for a coherent model."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["Does 'each city exactly once' include the starting city, meaning we cannot visit it again until the return?", "When you say 'visit each city exactly once', does that refer to the entire journey including the start and end?"]
+semantic_hit_rule = "The agent's question must ask for clarification on whether the starting city counts as visited twice or whether the 'exactly once' applies strictly to all cities excluding the final return."
+failure_modes = ["Assuming the starting city can be visited twice during the tour, leading to an incorrect interpretation", "Modeling without considering that each city must appear exactly once in the tour sequence (except the return)"]
+simulator_answer = "He must visit each city exactly once before returning to the starting city."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U3", "U7", "U2"]
+content = "I need help planning a route for a traveling salesman to visit multiple cities, with the goal to minimize the total distance, given that he must return to the original starting city.\n\n| City |    1    |    2    |    3    |    4    |\n| ---- | ------ | ------ | ------ | ------ |\n| 1    | 0    | 10   | 20   | 12   |\n| 2    | 10   | 0    | 5    | 10   |\n| 3    | 20   | 5    | 0    | 8    |\n| 4    | 15   | 12   | 8    | 0    |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

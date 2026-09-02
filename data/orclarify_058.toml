@@ -1,0 +1,93 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_058"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a plan for growing fruit on my farm."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Farm total area: 120 acres."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Profit per acre: apples $2000, pears $1800, oranges $2200, lemons $3000."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Maximize total profit."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The land used to grow apples should be at least twice the land used to grow pears."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The land used to grow apples should be at least three times the land used to grow lemons."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The land used to grow oranges must be twice the land used to grow lemons."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Vicky and David are unwilling to grow more than two types of fruit."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without the objective, the modeling agent cannot formulate any meaningful optimization problem."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What is the main goal we're trying to achieve with this farm plan—are we looking to maximize profit, or something else?", "Should the plan maximize total profit, or are we targeting a different objective like minimizing land use?"]
+semantic_hit_rule = "The Agent's question explicitly asks what the objective or goal of the optimization is, specifically inquiring whether it is profit maximization or another metric."
+failure_modes = ["Silently assuming the objective is profit maximization without confirming", "Proceeding directly to model formulation without clarifying the objective"]
+simulator_answer = "Our goal is to maximize the total profit from growing the fruit."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "apples_pears_min_ratio"
+severity = "P1"
+severity_reason = "Without this constraint, the model will likely produce a plan that violates the intended planting proportion between apples and pears, leading to a materially different result."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Is there any rule about how the apple acreage relates to the pear acreage, like a minimum ratio?", "Do you need the area for apples to be at least twice the area for pears?"]
+semantic_hit_rule = "The Agent's question asks about a lower‑bound ratio or proportionality between apple and pear acreage, mentioning either a minimum multiple or a specific relationship."
+failure_modes = ["Assuming there is no required relationship between apple and pear acreage", "Not asking about any planting‑ratio constraints"]
+simulator_answer = "Oh, right, we do have a requirement: the land used for apples has to be at least twice the land used for pears."
+
+[[hidden_slots]]
+slot_id = "H3"
+name = "oranges_lemons_exact_ratio"
+severity = "P1"
+severity_reason = "Without this constraint, the model would miss the exact proportionality rule between oranges and lemons, yielding a plan that may be invalid from the growers' perspective."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Is there a fixed relationship between the orange and lemon acreage, for example must oranges be exactly twice the lemons?", "Does the orange area need to be exactly twice the lemon area?"]
+semantic_hit_rule = "The Agent's question asks about an exact ratio or fixed relationship between orange and lemon acreage, specifically mentioning a factor of two or equality of the kind 'orange = 2 × lemon'."
+failure_modes = ["Assuming no fixed relationship between orange and lemon acreage", "Forgetting to ask about a precise proportionality between these two fruits"]
+simulator_answer = "Yes, that's right: the area for oranges must be exactly twice the area for lemons."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U8", "U2", "U3"]
+content = "I need help creating a plan for growing fruit on my farm, where the land used to grow apples should be at least three times the land used to grow lemons, and Vicky and David are unwilling to grow more than two types of fruit.\n\nFarm total area: 120 acres.\n\nProfit per acre: apples $2000, pears $1800, oranges $2200, lemons $3000."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,96 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_039"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help choosing an environmentally friendly transportation method to transport goods between the city and the suburb."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Available transportation methods: motorcycle, small truck, large truck."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Pollution per trip: motorcycle 40, small truck 70, large truck 100."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Product capacity per trip: motorcycle 10, small truck 20, large truck 50."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Maximum allowed motorcycle trips: 8"
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Product demand: 300 units"
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Maximum total trips: 20"
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Number of transportation methods to choose: 2"
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The number of motorcycle trips cannot exceed 8."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "At least 300 units of products must be transported."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "The total number of trips must be less than or equal to 20."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "Only two out of the three transportation methods can be chosen."
+
+[[problem_units]]
+id = "U13"
+kind = "objective"
+content = "Minimize total pollution."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective_minimize_total_pollution"
+severity = "P0"
+severity_reason = "Without the objective to minimize total pollution, the problem is missing its primary goal, making it impossible to formulate a valid optimization model."
+problem_unit_id = "U13"
+reference_acceptable_questions = ["What objective are we trying to achieve in this transportation problem?", "Should we minimize pollution, cost, or something else?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about the objective or goal of the problem, and must be answered with minimizing total pollution."
+failure_modes = ["Assuming the objective is to minimize cost or maximize profit", "Assuming the goal is to minimize the total number of trips"]
+simulator_answer = "We want to minimize the total pollution from all the trips."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U9", "U10", "U11", "U12", "U2", "U3", "U4", "U5", "U6", "U7", "U8"]
+content = "I need help choosing an environmentally friendly transportation method to transport goods between the city and the suburb, where the number of motorcycle trips cannot exceed 8, at least 300 units of products must be transported, the total number of trips must be less than or equal to 20, and only two out of the three transportation methods can be chosen.\n\nAvailable transportation methods: motorcycle, small truck, large truck.\n\nPollution per trip: motorcycle 40, small truck 70, large truck 100.\n\nProduct capacity per trip: motorcycle 10, small truck 20, large truck 50.\n\nMaximum allowed motorcycle trips: 8\n\nProduct demand: 300 units\n\nMaximum total trips: 20\n\nNumber of transportation methods to choose: 2"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

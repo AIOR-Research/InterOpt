@@ -1,0 +1,82 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_096"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a cutting plan for steel pipes supplied by a mill to fulfill a customer order."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Raw steel pipe length: 1850 mm."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Customer order: 15 pieces of 290 mm, 28 pieces of 315 mm, 21 pieces of 350 mm, 30 pieces of 455 mm."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Extra cost for each cutting pattern based on usage frequency: the most frequently used pattern incurs an extra cost equal to 1/10 of the value of one raw pipe; the second most frequently used incurs 2/10; the third incurs 3/10, and so forth."
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Minimize total cost."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "At most four different cutting patterns may be used."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Each raw pipe can produce at most 5 pieces."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "For any cutting pattern, the leftover length must not exceed 100 mm."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "cost_definition"
+severity = "P1"
+severity_reason = "Without clarification, the agent might incorrectly include raw material cost or other costs, altering the objective function. The problem mentions only extra costs, but 'total cost' could be ambiguous. Clarifying ensures the correct objective is minimized."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["What exactly does 'total cost' include? Is it only the extra costs based on pattern usage frequency, or does it also include the cost of the raw pipes themselves?", "Should we minimize the sum of those extra costs, or are there any other cost components we need to consider?"]
+semantic_hit_rule = "The Agent's question must explicitly ask for clarification of what constitutes total cost, or what is included in the objective function."
+failure_modes = ["Assuming total cost is only the sum of extra costs from pattern frequency.", "Assuming total cost includes the raw material price per pipe."]
+simulator_answer = "The total cost we want to minimize is the sum of those extra costs that come from how often we use each cutting pattern. We don't have any other costs in this situation."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "max_pieces_per_pipe"
+severity = "P1"
+severity_reason = "This constraint limits the number of pieces cut from a single raw pipe, directly affecting the cutting patterns and the feasible region. Without it, the agent might assume no such limit exists, leading to materially different patterns and solution."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Is there a restriction on how many pieces we can cut from one raw pipe?", "What is the maximum number of pieces that can be produced from a single raw pipe across all cutting patterns?"]
+semantic_hit_rule = "The Agent's question must ask about any limit on the number of pieces cut from a single raw pipe."
+failure_modes = ["Assuming no limit on the number of pieces per pipe.", "Assuming a different limit, such as at most 3 pieces per pipe."]
+simulator_answer = "Yes, under any cutting pattern we can produce at most 5 pieces from a single raw pipe."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U8", "U2", "U3", "U4"]
+content = "I need help creating a cutting plan for steel pipes supplied by a mill to fulfill a customer order, where at most four different cutting patterns may be used, and for any cutting pattern, the leftover length must not exceed 100 mm.\n\nRaw steel pipe length: 1850 mm.\n\nCustomer order: 15 pieces of 290 mm, 28 pieces of 315 mm, 21 pieces of 350 mm, 30 pieces of 455 mm.\n\nExtra cost for each cutting pattern based on usage frequency: the most frequently used pattern incurs an extra cost equal to 1/10 of the value of one raw pipe; the second most frequently used incurs 2/10; the third incurs 3/10, and so forth."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,91 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_064"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help deciding whether to hire some of the five candidates for our R&D team."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Candidate data:\n| Candidate | Salary | Skill Level | Project Management Experience (years) |\n|-----------|--------|-------------|----------------------------------------|\n| F         | 12000  | 2           | 1                                      |\n| G         | 15000  | 3           | 2                                      |\n| H         | 18000  | 4           | 2                                      |\n| I         | 5000   | 1           | 5                                      |\n| J         | 10000  | 2           | 4                                      |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Budget: $40,000"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Maximum number of new hires: 4"
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Minimum required total skill level: 8"
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Minimum required total project management experience (years): 8"
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Total salary paid to hired candidates cannot exceed the budget."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The number of hired candidates cannot exceed the maximum number of new hires."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The total skill level of hired candidates must be at least 8."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The total project management experience of hired candidates must be at least 8 years."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "At most one of candidates G and J can be hired."
+
+[[problem_units]]
+id = "U12"
+kind = "objective"
+content = "Minimize the total salary paid to hired candidates."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "at_most_one_of_G_and_J"
+severity = "P2"
+severity_reason = "Without this constraint, the problem remains a coherent optimization problem with budget, skill, experience, and headcount limits. Omitting it simply expands the feasible set but does not make modeling impossible or materially incorrect; it is a specific business preference."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Is there any restriction on hiring both G and J, or can we hire them both?", "Should we include a condition that we can't hire both G and J together because of their similar backgrounds?"]
+semantic_hit_rule = "The Agent's question must explicitly mention the limitation on hiring both G and J, or ask whether only one of them can be hired."
+failure_modes = ["Silently assuming both G and J can be hired without any mutual exclusion constraint.", "Assuming there is no restriction on hiring candidates with similar backgrounds."]
+simulator_answer = "Yes, because G and J have such similar technical backgrounds, we cannot hire both. We can only pick at most one of them."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U8", "U9", "U10", "U12", "U2", "U3", "U4", "U5", "U6"]
+content = "I need help deciding whether to hire some of the five candidates for our R&D team, where the total salary paid to hired candidates cannot exceed the budget, the number of hired candidates cannot exceed the maximum number of new hires, the total skill level of hired candidates must be at least 8, and the total project management experience of hired candidates must be at least 8 years, with the objective to minimize the total salary paid to hired candidates.\n\nCandidate data:\n| Candidate | Salary | Skill Level | Project Management Experience (years) |\n|-----------|--------|-------------|----------------------------------------|\n| F         | 12000  | 2           | 1                                      |\n| G         | 15000  | 3           | 2                                      |\n| H         | 18000  | 4           | 2                                      |\n| I         | 5000   | 1           | 5                                      |\n| J         | 10000  | 2           | 4                                      |\n\nBudget: $40,000\n\nMaximum number of new hires: 4\n\nMinimum required total skill level: 8\n\nMinimum required total project management experience (years): 8"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

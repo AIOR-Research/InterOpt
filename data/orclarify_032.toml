@@ -1,0 +1,51 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_032"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning production. A product consists of three components produced by four workshops, each with a limited number of production hours."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table 1.4\n\n| Workshop | Production Capacity (hours) | Production Rate (units/hour) |   |   |\n| :------: | :-------------------------: | :--------------------------: | - | - |\n|          |                             | Component 1 | Component 2  | Component 3 |\n|    A     |           100               |      10      |      15     |      5      |\n|    B     |           150               |      15      |      10     |      5      |\n|    C     |           80                |      20      |      5      |      10     |\n|    D     |           200               |      10      |      15     |      20     |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Maximize the number of completed products."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "The total number of hours allocated by each workshop to the three components must not exceed its production capacity."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unknown_objective"
+severity = "P0"
+severity_reason = "Without the objective, the problem is ill-posed. The agent cannot formulate a linear program because there is no function to optimize, making the entire model meaningless."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["What is the goal of the optimization? Are we trying to maximize the number of complete products assembled from the three components?", "Could you clarify the objective? Is it to maximize the total number of products that can be fully assembled?"]
+semantic_hit_rule = "The agent must ask a question that explicitly inquires about the optimization objective, such as what to maximize or minimize, and the response must indicate it is about the number of completed products."
+failure_modes = ["Assuming the objective is to maximize total component production (e.g., sum of all components produced) without considering assembly into complete products.", "Assuming the objective is to minimize production time or cost.", "Assuming the objective is to maximize any of the components individually."]
+simulator_answer = "We want to maximize the number of completed products. Each product requires one unit of each of the three components, so we need to produce components in a balanced way to assemble as many complete products as possible."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U2"]
+content = "I need help planning production. A product consists of three components produced by four workshops, each with a limited number of production hours, and the total number of hours allocated by each workshop to the three components must not exceed its production capacity.\n\nTable 1.4\n\n| Workshop | Production Capacity (hours) | Production Rate (units/hour) |   |   |\n| :------: | :-------------------------: | :--------------------------: | - | - |\n|          |                             | Component 1 | Component 2  | Component 3 |\n|    A     |           100               |      10      |      15     |      5      |\n|    B     |           150               |      15      |      10     |      5      |\n|    C     |           80                |      20      |      5      |      10     |\n|    D     |           200               |      10      |      15     |      20     |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

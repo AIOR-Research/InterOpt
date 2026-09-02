@@ -1,0 +1,72 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_060"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning a sales visit route."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "7 customers at 7 different locations."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "|  | 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n| 1 | - | 86 | 49 | 57 | 31 | 69 | 50 |\n| 2 |  | - | 68 | 79 | 93 | 24 | 5 |\n| 3 |  |  | - | 16 | 7 | 72 | 67 |\n| 4 |  |  |  | - | 90 | 69 | 1 |\n| 5 |  |  |  |  | - | 86 | 59 |\n| 6 |  |  |  |  |  | - | 81 |"
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Must visit 7 customers at 7 different locations."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Starting and ending at location 1."
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Minimize the travel distance."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "start_end_location"
+severity = "P2"
+severity_reason = "Without this information, the agent can still formulate a correct TSP model for minimizing total travel distance, but they might not output the tour starting at location 1 as intended. The missing constraint is a reporting detail that does not affect the core optimization result."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Does the tour have to start and end at a specific location?", "Is location 1 the starting and ending point?"]
+semantic_hit_rule = "The agent's question must inquire about the requirement for the tour to start and end at location 1, or generally ask if there is a specified depot location."
+failure_modes = ["Assuming the tour can start and end at any location, and not specifying the start node constraint."]
+simulator_answer = "Yes, the salesman needs to start and end his trip at location 1."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "objective_minimize_distance"
+severity = "P0"
+severity_reason = "Without an objective, the mathematical program cannot be formulated, as there is no criterion to optimize. The problem would be unclear and the agent would have to guess the objective, which is a critical missing piece that makes modeling impossible."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["What is the objective? Are we minimizing total distance, time, or cost?", "Do we want to minimize the total travel distance?"]
+semantic_hit_rule = "The agent's question must ask about the optimization objective, specifically whether the goal is to minimize total distance or something else."
+failure_modes = ["Assuming without clarification that the objective is to minimize distance, when it could be minimize time or cost."]
+simulator_answer = "The aim is to minimize the total travel distance for the entire trip."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U2", "U3"]
+content = "I need help planning a sales visit route and must visit 7 customers at 7 different locations.\n\n7 customers at 7 different locations.\n\n|  | 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n| 1 | - | 86 | 49 | 57 | 31 | 69 | 50 |\n| 2 |  | - | 68 | 79 | 93 | 24 | 5 |\n| 3 |  |  | - | 16 | 7 | 72 | 67 |\n| 4 |  |  |  | - | 90 | 69 | 1 |\n| 5 |  |  |  |  | - | 86 | 59 |\n| 6 |  |  |  |  |  | - | 81 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

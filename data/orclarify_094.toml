@@ -1,0 +1,71 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_094"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a plan for purchasing and processing crude oil to produce gasoline."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Selling prices: Gasoline Type I: 4800 yuan/t, Gasoline Type II: 5600 yuan/t."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Current inventories: 500 t of crude oil A, 1000 t of crude oil B."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Maximum allowable purchase amount of crude oil A: 1500 t."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Market price for crude oil A: 10,000 yuan/t for purchases up to 500 t; 8,000 yuan/t for the portion exceeding 500 t but not exceeding 1000 t; 6,000 yuan/t for the portion exceeding 1000 t."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "Total purchase of crude oil A cannot exceed 1500 t."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "In gasoline Type I, the proportion of crude oil A must be at least 50%."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "In gasoline Type II, the proportion of crude oil A must be at least 60%."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "type_ii_min_proportion_a"
+severity = "P1"
+severity_reason = "The proportion requirement for Gasoline Type II is a critical product specification constraint; without it, the agent may assume no minimum proportion or an incorrect proportion, leading to a model that allows blending ratios that do not meet the product requirements, potentially affecting profitability and feasibility."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["What is the minimum percentage of crude oil A required in Type II gasoline?", "Does the Type II gasoline also need a minimum amount of crude oil A, like the 50% for Type I?"]
+semantic_hit_rule = "The agent's inquiry must reference the proportion or minimum requirement of crude oil A specifically for gasoline Type II, or ask about any missing blending rule for Type II."
+failure_modes = ["Assuming no minimum proportion for Type II", "Assuming the minimum proportion for Type II is the same as for Type I (50%)"]
+simulator_answer = "For gasoline Type II, the blend must contain at least 60% of crude oil A."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U7", "U2", "U3", "U4", "U5"]
+content = "I need help creating a plan for purchasing and processing crude oil to produce gasoline, where the total purchase of crude oil A cannot exceed 1500 t and, in gasoline Type I, the proportion of crude oil A must be at least 50%.\n\nSelling prices: Gasoline Type I: 4800 yuan/t, Gasoline Type II: 5600 yuan/t.\n\nCurrent inventories: 500 t of crude oil A, 1000 t of crude oil B.\n\nMaximum allowable purchase amount of crude oil A: 1500 t.\n\nMarket price for crude oil A: 10,000 yuan/t for purchases up to 500 t; 8,000 yuan/t for the portion exceeding 500 t but not exceeding 1000 t; 6,000 yuan/t for the portion exceeding 1000 t."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

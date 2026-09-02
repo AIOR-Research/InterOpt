@@ -1,0 +1,77 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_078"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a staffing and sales plan for a shoe store."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "The shoe store employs 5 full-time sales clerks and 4 part-time sales clerks."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "|  | Monthly Working Hours | Sales Volume (Pairs/Hour) | Wage (Yuan/Hour) | Overtime Pay (Yuan/Hour) |\n| :---: | :---: | :---: | :---: | :---: |\n| Full-time | 160 | 5 | 1 | 1.5 |\n| Part-time | 80 | 2 | 0.6 | 0.7 |"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Each pair of shoes sold earns a profit of 0.3 yuan."
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Achieve monthly sales of 5500 pairs (p1)."
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Ensure full employment of all sales clerks (p2)."
+
+[[problem_units]]
+id = "U7"
+kind = "objective"
+content = "Minimize overtime hours (p3)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "ambiguous_sales_goal_interpretation"
+severity = "P1"
+severity_reason = "Without clarification on whether over‑achievement of the 5500‑pair target is acceptable or how deviation is treated, the agent may incorrectly penalize positive deviation, treat the goal as a hard equality, or mis‑specify the objective structure in a priority‑based model."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["When you say 'achieve monthly sales of 5500 pairs,' do you mean you want to reach at least this amount, or exactly this amount? Are you okay with selling more?", "Should I treat the 5500‑pair sales target as a goal where falling short is penalized but exceeding it is allowed, or is it a strict target?"]
+semantic_hit_rule = "The agent's question must explicitly address whether the sales target of 5500 pairs is a hard constraint or a soft goal, and whether deviations above and/or below are permitted."
+failure_modes = ["Assuming the sales target must be met exactly with no over‑achievement, leading to an unnecessary equality constraint.", "Assuming any deviation – over or under – is to be minimized equally, when only under‑achievement is actually penalized."]
+simulator_answer = "Our primary goal is to achieve monthly sales of 5500 pairs. That's the target we want to hit."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "unclear_full_employment_definition"
+severity = "P1"
+severity_reason = "The meaning of 'full employment' is ambiguous: it could imply that clerks must work exactly their regular hours (no overtime or under‑time) or at least their regular hours. This choice directly affects workforce constraints and the interaction with overtime minimization, making the model structurally different depending on the interpretation."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["What exactly does 'full employment' mean for your clerks? Does it mean they must work exactly 160/80 hours per month, or is it acceptable if they work more (with overtime) or less?", "Could you clarify if 'full employment' means that each clerk gets at least their regular hours, or exactly their regular hours with no overtime included?"]
+semantic_hit_rule = "The agent's question must ask for the specific definition of 'full employment' and whether it requires exactly the regular monthly hours, at least those hours, or something else, particularly in relation to overtime."
+failure_modes = ["Assuming full employment means all clerks must work exactly their regular hours, thereby forbidding any overtime and creating a direct conflict with the overtime minimization goal.", "Assuming full employment includes overtime, which would make the overtime goal redundant or inappropriately penalised."]
+simulator_answer = "We want to ensure full employment for all our sales clerks. They should all be working, not idle."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U2", "U3", "U4"]
+content = "I need help creating a staffing and sales plan for a shoe store, with the objective to minimize overtime hours (p3).\n\nThe shoe store employs 5 full-time sales clerks and 4 part-time sales clerks.\n\n|  | Monthly Working Hours | Sales Volume (Pairs/Hour) | Wage (Yuan/Hour) | Overtime Pay (Yuan/Hour) |\n| :---: | :---: | :---: | :---: | :---: |\n| Full-time | 160 | 5 | 1 | 1.5 |\n| Part-time | 80 | 2 | 0.6 | 0.7 |\n\nEach pair of shoes sold earns a profit of 0.3 yuan."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

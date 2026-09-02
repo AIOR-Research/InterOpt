@@ -1,0 +1,72 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_100"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help establishing a communication link in a network to maximize the bandwidth."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Bandwidth communication table between nodes A, B, C, D, E:\n\n|   | A  | B  | C  | D  | E  |\n|---|----|----|----|----|----|\n| A | 0  | 90 | 85 | 0  | 65 |\n| B | 95 | 0  | 70 | 65 | 34 |\n| C | 60 | 0  | 0  | 88 | 80 |\n| D | 67 | 30 | 25 | 0  | 84 |\n| E | 0  | 51 | 0  | 56 | 0  |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Maximize the bandwidth of the link, where the bandwidth of a link is defined as the minimum bandwidth value among its constituent connections."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "The link must connect node A to node E."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "The link must pass through service node C."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The link must not contain any loops (i.e., it must be a simple path)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_endpoints"
+severity = "P0"
+severity_reason = "Without specifying which two nodes are to be connected, the objective 'maximize the bandwidth of a link' is undefined; any modeling attempt would be meaningless."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["Which two nodes should the link connect? The problem statement only mentions 'a link' but doesn't specify the end nodes.", "From which source node to which destination node should the link be established?"]
+semantic_hit_rule = "The agent must explicitly ask for the start and end nodes of the link, indicating that the endpoints are unclear."
+failure_modes = ["Silently assuming the link is between any two nodes that yield the maximum possible min bandwidth (like a max bottleneck path problem without fixed endpoints)", "Assuming all nodes are potential endpoints and selecting the pair with the highest bottleneck value", "Interpreting the problem as a maximum spanning tree or a connectivity problem without specific endpoints"]
+simulator_answer = "The link should connect node A to node E."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "must_pass_through_node_C"
+severity = "P1"
+severity_reason = "Missing this constraint still yields a coherent A-to-E simple path maximum bandwidth problem; but the intended business rule requires the link to go through service node C, which substantially alters the feasible set and optimal solution."
+problem_unit_id = "U5"
+reference_acceptable_questions = ["Is there any required intermediate node that the link must traverse?", "Does the link have to go through any specific service node, like C?"]
+semantic_hit_rule = "The agent must ask whether the link must pass through a specific intermediate node or any mandatory waypoint (especially service node C)."
+failure_modes = ["Silently assuming the link can use any simple path from A to E without requiring a specific intermediate node", "Assuming the problem is simply a maximum bottleneck path problem from A to E without any waypoint constraints"]
+simulator_answer = "Yes, the link must pass through service node C."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U3", "U6", "U2"]
+content = "I need help establishing a communication link in a network to maximize the bandwidth, where the bandwidth of a link is defined as the minimum bandwidth value among its constituent connections, and the link must not contain any loops (i.e., it must be a simple path).\n\nBandwidth communication table between nodes A, B, C, D, E:\n\n|   | A  | B  | C  | D  | E  |\n|---|----|----|----|----|----|\n| A | 0  | 90 | 85 | 0  | 65 |\n| B | 95 | 0  | 70 | 65 | 34 |\n| C | 60 | 0  | 0  | 88 | 80 |\n| D | 67 | 30 | 25 | 0  | 84 |\n| E | 0  | 51 | 0  | 56 | 0  |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

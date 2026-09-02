@@ -1,0 +1,56 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_035"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help scheduling the dyeing operations for batches of fabric."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Number of dyeing vats: 3. Number of batches: 5."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Processing time matrix (batch i, vat j): [[3, 1, 1], [2, 1.5, 1], [3, 1.2, 1.3], [2, 2, 2], [2.1, 2, 3]]"
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Each batch of fabric must be dyed in sequence in each vat: first, the second, and third vats."
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Minimize the completion time of the last batch."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_vat_sequence"
+severity = "P1"
+severity_reason = "Without this constraint, the agent cannot determine whether the vats must be visited in a fixed order (flow shop) or if the order is flexible. This directly affects the scheduling model structure and could lead to a fundamentally different optimization problem (e.g., job shop vs. flow shop). Clarification is essential for model correctness, but the agent can still propose a tentative model (e.g., assuming all vats are used) and ask."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["Do the batches have to go through all three vats, and is the order fixed as vat 1 first, then vat 2, then vat 3?", "Can you confirm that each batch must be processed in the order vat 1 → vat 2 → vat 3?"]
+semantic_hit_rule = "The Agent's question must ask about the required processing sequence across the vats, specifically whether a fixed order (first, second, third vat) applies to all batches."
+failure_modes = ["Silent incorrect assumption: treating the three vats as independent parallel machines where each batch only needs one operation.", "Silent incorrect assumption: allowing batches to be processed on the vats in any order (e.g., vat 2 before vat 1) as long as each batch visits all vats."]
+simulator_answer = "Yes, every batch must be dyed in order: first vat 1, then vat 2, and finally vat 3. That's our standard process."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U2", "U3"]
+content = "I need help scheduling the dyeing operations for batches of fabric, and I want to minimize the completion time of the last batch.\n\nNumber of dyeing vats: 3. Number of batches: 5.\n\nProcessing time matrix (batch i, vat j): [[3, 1, 1], [2, 1.5, 1], [3, 1.2, 1.3], [2, 2, 2], [2.1, 2, 3]]"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

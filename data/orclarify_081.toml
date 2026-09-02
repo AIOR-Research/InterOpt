@@ -1,0 +1,51 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_081"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning a parking arrangement on Danzig Street for party guests arriving in cars."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "The lengths of the 15 cars (i from 1 to 15, λ_i in meters) are:\n\n| i | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |\n|----|----|-----|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|\n| λ_i | 4 | 4.5 | 5 | 4.1 | 2.4 | 5.2 | 3.7 | 3.5 | 3.2 | 4.5 | 2.3 | 3.3 | 3.8 | 4.6 | 3 |"
+
+[[problem_units]]
+id = "U3"
+kind = "assumption"
+content = "Vehicles can park on both sides of the street."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize the total length of the street occupied by the parked vehicles."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective_definition"
+severity = "P0"
+severity_reason = "Without the objective, the modeling agent cannot define the objective function of the optimization model. The problem statement would be missing the goal of the parking arrangement, making it impossible to formulate a meaningful optimization problem."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What exactly should I minimize? The total length of street occupied?", "What is the objective: to minimize the space used on the street?"]
+semantic_hit_rule = "The Agent's question must ask about the objective or what to minimize/maximize in the parking problem. It should specifically mention the need for an optimization goal."
+failure_modes = ["Silent incorrect assumption: Assuming the objective is to minimize the maximum length used on either side of the street.", "Silent incorrect assumption: Assuming the objective is to minimize the number of cars parked on the street."]
+simulator_answer = "I want the cars to take up as little total street length as possible. So minimize the combined length of curb space they occupy."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U3", "U2"]
+content = "I need help planning a parking arrangement on Danzig Street for party guests arriving in cars, where vehicles can park on both sides of the street.\n\nThe lengths of the 15 cars (i from 1 to 15, λ_i in meters) are:\n\n| i | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |\n|----|----|-----|----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|\n| λ_i | 4 | 4.5 | 5 | 4.1 | 2.4 | 5.2 | 3.7 | 3.5 | 3.2 | 4.5 | 2.3 | 3.3 | 3.8 | 4.6 | 3 |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

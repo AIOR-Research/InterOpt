@@ -1,0 +1,86 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_059"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning the monthly production of three candy brands using three raw materials."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Item            | A               | B               | C               | Raw Material Cost (Yuan/kg) | Monthly Limit (kg) |\n|:----------------|:---------------|:---------------|:---------------|:-----------------------------|:-------------------|\n| A               | ≥ 60%          | ≥ 15%          |                | 2.00                        | 2000               |\n| B               |                |                |                | 1.50                        | 2500               |\n| C               | ≤ 20%          | ≤ 60%          | ≤ 50%          | 1.00                        | 1200               |\n| Processing Fee (Yuan/kg) | 0.50         | 0.40           | 0.30           |                             |                     |\n| Selling Price (Yuan/kg)   | 3.40         | 2.85           | 2.25           |                             |                     |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Maximize the monthly profit."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "For brand A candy, the content of raw material A must be at least 60%."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "For brand A candy, the content of raw material B must be at least 15%."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "For brand C candy, the content of raw material A must be at most 20%."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "For brand C candy, the content of raw material B must be at most 60%."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "For brand C candy, the content of raw material C must be at most 50%."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The monthly consumption of raw material A cannot exceed 2000 kg."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The monthly consumption of raw material B cannot exceed 2500 kg."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "The monthly consumption of raw material C cannot exceed 1200 kg."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "profit_calculation"
+severity = "P1"
+severity_reason = "Without clarification, the agent must guess which cost components are subtracted to compute profit. A wrong assumption (e.g., ignoring raw material costs or processing fees) would make the objective materially inaccurate, leading to a suboptimal or even invalid production plan."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["What exactly does 'profit' include? Should we subtract raw material costs, processing fees, or both from the revenue?", "Is monthly profit defined as total selling price minus total raw material cost and total processing fee?"]
+semantic_hit_rule = "The agent's question must explicitly ask how profit is calculated, specifically whether raw material costs, processing fees, or both are deducted from revenue."
+failure_modes = ["Silently assuming profit = revenue − processing fees only, ignoring raw material costs.", "Silently assuming profit = revenue − raw material costs only, ignoring processing fees.", "Failing to ask for a precise formula and instead embedding an arbitrary cost subtraction rule in the model."]
+simulator_answer = "We want to maximize monthly profit. That means total revenue from selling all three candy brands minus the total raw material costs and the total processing fees."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U5", "U6", "U7", "U8", "U9", "U10", "U11", "U2"]
+content = "I need help planning the monthly production of three candy brands using three raw materials, where for brand A candy the content of raw material A must be at least 60% and the content of raw material B must be at least 15%, for brand C candy the content of raw material A must be at most 20%, the content of raw material B must be at most 60%, and the content of raw material C must be at most 50%, and the monthly consumption of raw material A cannot exceed 2000 kg, that of raw material B cannot exceed 2500 kg, and that of raw material C cannot exceed 1200 kg.\n\n| Item            | A               | B               | C               | Raw Material Cost (Yuan/kg) | Monthly Limit (kg) |\n|:----------------|:---------------|:---------------|:---------------|:-----------------------------|:-------------------|\n| A               | ≥ 60%          | ≥ 15%          |                | 2.00                        | 2000               |\n| B               |                |                |                | 1.50                        | 2500               |\n| C               | ≤ 20%          | ≤ 60%          | ≤ 50%          | 1.00                        | 1200               |\n| Processing Fee (Yuan/kg) | 0.50         | 0.40           | 0.30           |                             |                     |\n| Selling Price (Yuan/kg)   | 3.40         | 2.85           | 2.25           |                             |                     |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,76 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_098"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production plan."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "| Product | Steel (kg) | Aluminum (kg) | Labor (hours) | Profit (yuan, excl. overtime) |\n|---------|------------|---------------|--------------|----------------------------|\n| A       | 6          | 8             | 11           | 5000                       |\n| B       | 12         | 20            | 24           | 11000                      |"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Available resources: Steel: 200 kg, Aluminum: 300 kg, Labor: 300 hours"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Overtime pay rate: 100 yuan per hour"
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Maximize the company's profit"
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Minimize worker overtime"
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "The total steel used must not exceed 200 kg"
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "The total aluminum used must not exceed 300 kg"
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The amount of labor used that is not overtime must not exceed 300 hours"
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "unclear_overtime_minimization_goal"
+severity = "P0"
+severity_reason = "The problem statement includes two objectives: maximize profit and minimize worker overtime. Without clarifying how to balance or combine these potentially conflicting goals, no responsible modeling agent can define a valid objective function. This gap makes the model ill-posed."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["How should we handle the trade-off between maximizing profit and minimizing overtime? Should we treat overtime minimization as a secondary goal or merge it into the profit calculation?", "Should we minimize total overtime subject to achieving a target profit, or maximize profit while keeping overtime below a certain limit?"]
+semantic_hit_rule = "The agent's question must explicitly ask how to handle the multi-objective situation, such as priority, lexicographic ordering, weighting, or a specific method to combine profit maximization and overtime minimization."
+failure_modes = ["Assuming profit is already net of overtime costs and ignoring the separate instruction to minimize overtime", "Assuming overtime is only a cost factor to be deducted from profit, not a separate objective", "Modeling the problem as a single-objective profit maximization and silently discarding the minimization of overtime"]
+simulator_answer = "We want to minimize the amount of overtime hours worked by our staff."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U7", "U8", "U9", "U2", "U3", "U4"]
+content = "I need help creating a production plan to maximize the company's profit, subject to the constraints that the total steel used must not exceed 200 kg, the total aluminum used must not exceed 300 kg, and the amount of labor used that is not overtime must not exceed 300 hours.\n\n| Product | Steel (kg) | Aluminum (kg) | Labor (hours) | Profit (yuan, excl. overtime) |\n|---------|------------|---------------|--------------|----------------------------|\n| A       | 6          | 8             | 11           | 5000                       |\n| B       | 12         | 20            | 24           | 11000                      |\n\nAvailable resources: Steel: 200 kg, Aluminum: 300 kg, Labor: 300 hours\n\nOvertime pay rate: 100 yuan per hour"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

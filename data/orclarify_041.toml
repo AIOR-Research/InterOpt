@@ -1,0 +1,86 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_041"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating an investment plan over the next three years that maximizes my total wealth at the end."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Initial capital at beginning of Year 1: 500,000 yuan."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Investment projects:\n(1) A 1-year product available at the beginning of each year (Years 1–3). If you invest I at the start of a year, you receive 1.20·I at that year’s end. Unlimited capacity.\n(2) A 2-year product available only at the beginning of Year 1; it matures at the end of Year 2 and pays 1.50·I. Investment in this product is capped at 120,000 yuan.\n(3) A same-year product available at the beginning of Year 2, maturing at the end of Year 2, and paying 1.60·I. Investment is capped at 150,000 yuan.\n(4) A 1-year product available at the beginning of Year 3, maturing at the end of Year 3, and paying 1.40·I. Investment is capped at 100,000 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Maximum allowable investment for project (2): 120,000 yuan."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "Investment in product (2) cannot exceed 120,000 yuan."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Maximum allowable investment for project (3): 150,000 yuan."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Investment in product (3) cannot exceed 150,000 yuan."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Maximum allowable investment for project (4): 100,000 yuan."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Investment in product (4) cannot exceed 100,000 yuan."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "No borrowing allowed; decisions are made at the beginnings of Years 1–3 using only currently available cash (initial capital and proceeds from matured investments)."
+
+[[problem_units]]
+id = "U11"
+kind = "objective"
+content = "Maximize total principal plus interest at the end of Year 3."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "no_borrowing_cash_only"
+severity = "P1"
+severity_reason = "Without this constraint, the agent may assume borrowing is allowed, leading to a materially incorrect cash-flow model that overestimates available funds and yields an investment plan different from the intended problem."
+problem_unit_id = "U10"
+reference_acceptable_questions = ["Is borrowing allowed, or can we only use the cash we already have?", "Are we permitted to take out loans, or must we invest strictly from the initial capital and any returns we receive?"]
+semantic_hit_rule = "The agent's question must explicitly ask about whether borrowing is allowed, or about the restriction that only cash on hand (initial capital and matured proceeds) can be used for investments."
+failure_modes = ["Assuming unlimited borrowing is possible at zero interest", "Assuming the agent can carry a negative cash balance to invest more"]
+simulator_answer = "You cannot borrow any money. At the beginning of each year, you can only invest the cash you have at that moment, which comes from your initial capital and the proceeds of investments that have already matured."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U7", "U9", "U11", "U2", "U3", "U4", "U6", "U8"]
+content = "I need help creating an investment plan over the next three years, with the objective to maximize total principal plus interest at the end of Year 3. However, investment in product (2) cannot exceed 120,000 yuan, investment in product (3) cannot exceed 150,000 yuan, and investment in product (4) cannot exceed 100,000 yuan.\n\nInitial capital at beginning of Year 1: 500,000 yuan.\n\nInvestment projects:\n(1) A 1-year product available at the beginning of each year (Years 1–3). If you invest I at the start of a year, you receive 1.20·I at that year’s end. Unlimited capacity.\n(2) A 2-year product available only at the beginning of Year 1; it matures at the end of Year 2 and pays 1.50·I. Investment in this product is capped at 120,000 yuan.\n(3) A same-year product available at the beginning of Year 2, maturing at the end of Year 2, and paying 1.60·I. Investment is capped at 150,000 yuan.\n(4) A 1-year product available at the beginning of Year 3, maturing at the end of Year 3, and paying 1.40·I. Investment is capped at 100,000 yuan.\n\nMaximum allowable investment for project (2): 120,000 yuan.\n\nMaximum allowable investment for project (3): 150,000 yuan.\n\nMaximum allowable investment for project (4): 100,000 yuan."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

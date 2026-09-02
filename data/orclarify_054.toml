@@ -1,0 +1,51 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_054"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning production for multiple products."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Table 2-3:\n| Equipment Code | I  | II | III | Effective Monthly Equipment Hours |\n|----------------|----|----|-----|----------------------------------|\n| A              | 8  | 2  | 10  | 300                              |\n| B              | 10 | 5  | 8   | 400                              |\n| C              | 2  | 13 | 10  | 420                              |\n| Unit Product Profit (per thousand yuan) | 3  | 2  | 2.9 |           |"
+
+[[problem_units]]
+id = "U3"
+kind = "objective"
+content = "Maximize total production profit."
+
+[[problem_units]]
+id = "U4"
+kind = "constraint"
+content = "Total processing time on each equipment (A, B, C) must not exceed its effective monthly hours."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without specifying the objective, the agent cannot determine what to optimize. The problem statement explicitly says 'maximize production profit', so hiding this leaves the goal entirely undefined, making any model meaningless."
+problem_unit_id = "U3"
+reference_acceptable_questions = ["What is the objective we are trying to achieve with this production plan?", "Should we maximize profit, minimize cost, or something else?"]
+semantic_hit_rule = "The agent's question must specifically ask about the optimization objective or what to maximize/minimize."
+failure_modes = ["Assuming the objective is to minimize total cost", "Assuming the objective is to maximize revenue without considering profit", "Treating the problem as a pure feasibility problem with no optimization goal"]
+simulator_answer = "We want to maximize the total profit from producing these three products."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U4", "U2"]
+content = "I need help planning production for multiple products, where total processing time on each equipment (A, B, C) must not exceed its effective monthly hours.\n\nTable 2-3:\n| Equipment Code | I  | II | III | Effective Monthly Equipment Hours |\n|----------------|----|----|-----|----------------------------------|\n| A              | 8  | 2  | 10  | 300                              |\n| B              | 10 | 5  | 8   | 400                              |\n| C              | 2  | 13 | 10  | 420                              |\n| Unit Product Profit (per thousand yuan) | 3  | 2  | 2.9 |           |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

@@ -1,0 +1,127 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_001"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a production and workforce plan for a food factory."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Current workforce: 50 skilled workers."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Production rates: one skilled worker can produce 10 kg/h of food I or 6 kg/h of food II."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Weekly demand for foods I and II (kg):\n\n| Week | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|------|---|---|---|---|---|---|---|---|\n| I    | 10000 | 10000 | 12000 | 12000 | 16000 | 16000 | 20000 | 20000 |\n| II   | 6000 | 7200 | 8400 | 10800 | 10800 | 12000 | 12000 | 12000 |"
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Maximum number of new workers a skilled worker can train in a two‑week period: 3."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Training period duration: 2 weeks."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Normal weekly working hours: 40 hours per week."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Overtime: working 60 hours per week, weekly wage 540 yuan."
+
+[[problem_units]]
+id = "U9"
+kind = "data"
+content = "Weekly wage for a skilled worker: 360 yuan."
+
+[[problem_units]]
+id = "U10"
+kind = "data"
+content = "Weekly wage for a trainee during the training period: 120 yuan."
+
+[[problem_units]]
+id = "U11"
+kind = "data"
+content = "After training, new workers receive 240 yuan/week and have the same production efficiency as skilled workers."
+
+[[problem_units]]
+id = "U12"
+kind = "data"
+content = "Compensation fees for late delivery: 0.5 yuan per kg per week for food I, 0.6 yuan per kg per week for food II."
+
+[[problem_units]]
+id = "U13"
+kind = "constraint"
+content = "Each skilled worker can train at most 3 new workers in any two-week period."
+
+[[problem_units]]
+id = "U14"
+kind = "constraint"
+content = "During the two-week training period, the trainer and trainees do not participate in production."
+
+[[problem_units]]
+id = "U15"
+kind = "constraint"
+content = "A total of 50 new workers must be trained by the end of the 8th week."
+
+[[problem_units]]
+id = "U16"
+kind = "constraint"
+content = "Only skilled workers can train new workers."
+
+[[problem_units]]
+id = "U17"
+kind = "objective"
+content = "Minimize total cost."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "no_production_during_training_period"
+severity = "P1"
+severity_reason = "Without this information, the agent may assume trainers and trainees can produce during training, leading to overestimated production capacity and a materially inaccurate model."
+problem_unit_id = "U14"
+reference_acceptable_questions = ["Are the skilled trainers and the trainees allowed to produce any food during those two weeks of training, or are they completely off production?", "Do the workers involved in training (both trainer and trainees) still contribute to production while the training is happening?"]
+semantic_hit_rule = "The agent's question mentions whether trainers or trainees can produce, or explicitly asks about production participation during a training period."
+failure_modes = ["Assuming trainers and trainees can produce food while training is ongoing", "Not accounting for the lost production hours of skilled workers and trainees during any training week"]
+simulator_answer = "No, during the two-week training period, neither the skilled worker doing the training nor the trainees they're training are involved in any production. They focus entirely on training."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "minimize_total_cost"
+severity = "P0"
+severity_reason = "Without an objective, the model is ill‑posed; the agent cannot formulate the optimization problem or know what to minimize, making modeling impossible."
+problem_unit_id = "U17"
+reference_acceptable_questions = ["What exactly is the goal we should optimize here? Is it to minimize total cost?", "Should the plan aim to minimize overall cost, or is there another primary objective like maximizing profit or minimizing late deliveries?"]
+semantic_hit_rule = "The agent's question explicitly asks about the optimization goal, asking whether the objective is to minimize total cost or something else."
+failure_modes = ["Assuming the goal is to maximize profit", "Formulating an ill‑posed model without a defined objective"]
+simulator_answer = "The goal is to keep the overall expense as low as possible—we want to minimize the total cost, including wages, compensation fees, and any other relevant costs."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U13", "U15", "U16", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9", "U10", "U11", "U12"]
+content = "I need help creating a production and workforce plan for a food factory, where only skilled workers can train new workers, each skilled worker can train at most 3 new workers in any two-week period, and a total of 50 new workers must be trained by the end of the 8th week.\n\nCurrent workforce: 50 skilled workers.\n\nProduction rates: one skilled worker can produce 10 kg/h of food I or 6 kg/h of food II.\n\nWeekly demand for foods I and II (kg):\n\n| Week | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|------|---|---|---|---|---|---|---|---|\n| I    | 10000 | 10000 | 12000 | 12000 | 16000 | 16000 | 20000 | 20000 |\n| II   | 6000 | 7200 | 8400 | 10800 | 10800 | 12000 | 12000 | 12000 |\n\nMaximum number of new workers a skilled worker can train in a two‑week period: 3.\n\nTraining period duration: 2 weeks.\n\nNormal weekly working hours: 40 hours per week.\n\nOvertime: working 60 hours per week, weekly wage 540 yuan.\n\nWeekly wage for a skilled worker: 360 yuan.\n\nWeekly wage for a trainee during the training period: 120 yuan.\n\nAfter training, new workers receive 240 yuan/week and have the same production efficiency as skilled workers.\n\nCompensation fees for late delivery: 0.5 yuan per kg per week for food I, 0.6 yuan per kg per week for food II."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

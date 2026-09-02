@@ -1,0 +1,76 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_089"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning production for liquid products A and B."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Profit per kg: product A £30, product B £10."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Production time per kg: product A 6 hours, product B 3 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Maximum weekly production hours: 40 hours."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Storage space required for product A is four times that of product B."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Maximum storage of product A: 4 kg per week."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Total production time must not exceed 40 hours per week."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Output of product B must be at least three times the output of product A."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "The amount of product A stored per week cannot exceed 4 kilograms."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "minimum_ratio_productB_toA"
+severity = "P1"
+severity_reason = "Without this demand ratio requirement, the agent would formulate a model missing a key business constraint, leading to a materially different and likely invalid optimal plan. The model would be coherent but not reflect the intended problem."
+problem_unit_id = "U8"
+reference_acceptable_questions = ["Is there any minimum requirement for how much B we must produce relative to A?", "Do we need to satisfy a specific ratio between the outputs of product A and product B?"]
+semantic_hit_rule = "The agent's question must explicitly mention a demand constraint, a minimum output ratio, or that product B must be at least three times product A."
+failure_modes = ["Assuming no market demand constraint between products A and B.", "Assuming only that demand must be met but not a specific proportion (e.g., assuming any mix is allowed)."]
+simulator_answer = "Market demand requires that we produce at least three times as much product B as product A each week."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U9", "U2", "U3", "U4", "U5", "U6"]
+content = "I need help planning production for liquid products A and B, where total production time must not exceed 40 hours per week and the amount of product A stored per week cannot exceed 4 kilograms.\n\nProfit per kg: product A £30, product B £10.\n\nProduction time per kg: product A 6 hours, product B 3 hours.\n\nMaximum weekly production hours: 40 hours.\n\nStorage space required for product A is four times that of product B.\n\nMaximum storage of product A: 4 kg per week."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

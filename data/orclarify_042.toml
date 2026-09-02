@@ -1,0 +1,96 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_042"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help allocating two steelmaking methods across the available furnaces."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Number of steel furnaces: 2."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "First method: time per furnace a=2 hours."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "First method: fuel cost m=50."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Second method: time per furnace b=3 hours."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Second method: fuel cost n=70."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Steel production per furnace: k=10 tons."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Minimum required steel production: d=30 tons."
+
+[[problem_units]]
+id = "U9"
+kind = "data"
+content = "Time limit: c=12 hours."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "The total amount of steel produced must be at least 30 tons."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "The entire production must be completed within 12 hours."
+
+[[problem_units]]
+id = "U12"
+kind = "assumption"
+content = "Each furnace produces 10 tons of steel per batch, regardless of the method used."
+
+[[problem_units]]
+id = "U13"
+kind = "objective"
+content = "Minimize total fuel expenses."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "objective_minimize_fuel_cost"
+severity = "P0"
+severity_reason = "Without knowing the optimization objective, the modeling agent cannot define what to optimize; the problem is ill-posed and any model would be arbitrary."
+problem_unit_id = "U13"
+reference_acceptable_questions = ["What is the objective we are trying to achieve with this allocation? Are we minimizing fuel costs?", "Should we minimize the total fuel expenses, or is there another goal like minimizing time?"]
+semantic_hit_rule = "The agent's question must explicitly inquire about the objective function, specifically whether it is to minimize total fuel expenses."
+failure_modes = ["Assuming the objective is to minimize total production time.", "Assuming the goal is to maximize steel output within the time limit."]
+simulator_answer = "We want to minimize the total fuel expenses."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U10", "U11", "U12", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9"]
+content = "I need help allocating two steelmaking methods across the available furnaces, given that the total amount of steel produced must be at least 30 tons and the entire production must be completed within 12 hours. It is assumed that each furnace produces 10 tons of steel per batch, regardless of the method used.\n\nNumber of steel furnaces: 2.\n\nFirst method: time per furnace a=2 hours.\n\nFirst method: fuel cost m=50.\n\nSecond method: time per furnace b=3 hours.\n\nSecond method: fuel cost n=70.\n\nSteel production per furnace: k=10 tons.\n\nMinimum required steel production: d=30 tons.\n\nTime limit: c=12 hours."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

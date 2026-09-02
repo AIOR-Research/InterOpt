@@ -1,0 +1,81 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_022"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a monthly production plan for three products: A1, A2, A3."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Production days available per month: 22 days."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "| Product | $A_{1}$ | $A_{2}$ | $A_{3}$ |\n| :---: | :---: | :---: | :---: |\n| Maximum Demand | 5300 | 4500 | 5400 |\n| Selling Price | $124$ | $109$ | $115$ |\n| Production Cost | $73.30$ | $52.90$ | $65.40$ |\n| Production Quota | 500 | 450 | 550 |"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "| Product | $A_{1}$ | $A_{2}$ | $A_{3}$ |\n| :---: | :---: | :---: | :---: |\n| Activation Cost | $170000$ | $150000$ | $100000$ |"
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "\\begin{array}{c|ccc}\nProduct & A_{1} & A_{2} & A_{3} \\\\\n\\hline\nMinimum Batch & 20 & 20 & 16\n\\end{array}"
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Maximize total revenue."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Production quantity of each product cannot exceed its maximum demand."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "For each product, production quantity is either zero or at least its minimum batch size."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "If a product is produced, its fixed activation cost is incurred."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Total number of production days used (sum over products of (quantity produced / production quota)) must not exceed 22 days."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_revenue_objective"
+severity = "P0"
+severity_reason = "Without knowing the objective, the optimization problem is undefined. The agent cannot build a model without inventing the objective, which would almost certainly be incorrect."
+problem_unit_id = "U6"
+reference_acceptable_questions = ["Could you clarify what we are trying to optimize? Is it maximizing total revenue, profit, or something else?", "Just to confirm, is the objective to maximize total revenue?"]
+semantic_hit_rule = "The agent explicitly asks about the objective function, e.g., what quantity to maximize, or asks to confirm if the objective is total revenue."
+failure_modes = ["Silently assuming the objective is to maximize total profit (revenue minus all costs)", "Assuming the goal is to maximize production volume"]
+simulator_answer = "We want to maximize the total revenue from selling the products."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U7", "U8", "U9", "U10", "U2", "U3", "U4", "U5"]
+content = "I need help creating a monthly production plan for three products: A1, A2, A3. Production quantity of each product cannot exceed its maximum demand; for each product, production quantity is either zero or at least its minimum batch size; if produced, its fixed activation cost is incurred; and the total number of production days used, calculated as the sum over products of quantity produced divided by production quota, must not exceed 22 days.\n\nProduction days available per month: 22 days.\n\n| Product | $A_{1}$ | $A_{2}$ | $A_{3}$ |\n| :---: | :---: | :---: | :---: |\n| Maximum Demand | 5300 | 4500 | 5400 |\n| Selling Price | $124$ | $109$ | $115$ |\n| Production Cost | $73.30$ | $52.90$ | $65.40$ |\n| Production Quota | 500 | 450 | 550 |\n\n| Product | $A_{1}$ | $A_{2}$ | $A_{3}$ |\n| :---: | :---: | :---: | :---: |\n| Activation Cost | $170000$ | $150000$ | $100000$ |\n\n\\begin{array}{c|ccc}\nProduct & A_{1} & A_{2} & A_{3} \\\\\n\\hline\nMinimum Batch & 20 & 20 & 16\n\\end{array}"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

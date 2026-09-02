@@ -1,0 +1,66 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_043"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning how many trucks to dispatch daily from two warehouses to a production base."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Minimum daily raw material requirements: at least 240 pieces of raw material A, at least 80 kg of raw material B, at least 120 tons of raw material C."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Each truck from warehouse A can transport back to the production base 4 pieces of raw material A, 2 kg of raw material B, 6 tons of raw material C, with a freight cost of 200 yuan per truck; each truck from warehouse B can transport back to the production base 7 pieces of raw material A, 2 kg of raw material B, 2 tons of raw material C per day, with a freight cost of 160 yuan per truck."
+
+[[problem_units]]
+id = "U4"
+kind = "objective"
+content = "Minimize total freight cost."
+
+[[problem_units]]
+id = "U5"
+kind = "constraint"
+content = "At least 240 pieces of raw material A must be brought in daily."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "At least 80 kg of raw material B must be brought in daily."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "At least 120 tons of raw material C must be brought in daily."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective_function"
+severity = "P0"
+severity_reason = "Without an objective, the optimization problem is ill-posed; the modeling agent cannot formulate a meaningful model without knowing what to minimize or maximize."
+problem_unit_id = "U4"
+reference_acceptable_questions = ["What is the objective we are trying to achieve? Should we minimize total cost?", "Are we aiming to minimize the total freight cost?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the objective or what to optimize, specifically mentioning minimizing or maximizing something, or inquiring about the goal."
+failure_modes = ["Silently assuming the objective is to minimize total freight cost without confirming with the user.", "Assuming the objective is to maximize some other metric like profit or minimize number of trucks."]
+simulator_answer = "We want to minimize the total freight cost per day."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U7", "U2", "U3"]
+content = "I need help planning how many trucks to dispatch daily from two warehouses to a production base, with the requirement that at least 240 pieces of raw material A, 80 kg of raw material B, and 120 tons of raw material C must be brought in daily.\n\nMinimum daily raw material requirements: at least 240 pieces of raw material A, at least 80 kg of raw material B, at least 120 tons of raw material C.\n\nEach truck from warehouse A can transport back to the production base 4 pieces of raw material A, 2 kg of raw material B, 6 tons of raw material C, with a freight cost of 200 yuan per truck; each truck from warehouse B can transport back to the production base 7 pieces of raw material A, 2 kg of raw material B, 2 tons of raw material C per day, with a freight cost of 160 yuan per truck."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

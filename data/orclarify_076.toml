@@ -1,0 +1,86 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_076"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning timber purchasing, sales, and storage across quarters."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Storage cost parameters: a = 70, b = 100. The storage cost is (a + b*u) yuan/m³, where u is the storage time in quarters."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Maximum storage capacity: 200,000 m³."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Table 1-18: Purchasing and sales prices and maximum sales volumes per quarter.\n\n| Quarter | Purchase Price (10,000 yuan/10,000 m²) | Sale Price (10,000 yuan/10,000 m²) | Estimated Maximum Sales Volume (10,000 m³) |\n|---------|----------------------------------------|------------------------------------|---------------------------------------------|\n| Winter  | 410                                    | 425                                | 100                                         |\n| Spring  | 430                                    | 440                                | 140                                         |\n| Summer  | 460                                    | 465                                | 200                                         |\n| Autumn  | 450                                    | 455                                | 160                                         |"
+
+[[problem_units]]
+id = "U5"
+kind = "objective"
+content = "Maximize annual profit."
+
+[[problem_units]]
+id = "U6"
+kind = "constraint"
+content = "The storage amount at any time must not exceed the maximum warehouse capacity of 200,000 m³."
+
+[[problem_units]]
+id = "U7"
+kind = "constraint"
+content = "Winter sales cannot exceed the estimated maximum sales volume of 100 (10,000 m³)."
+
+[[problem_units]]
+id = "U8"
+kind = "constraint"
+content = "Spring sales cannot exceed the estimated maximum sales volume of 140 (10,000 m³)."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Summer sales cannot exceed the estimated maximum sales volume of 200 (10,000 m³)."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Autumn sales cannot exceed the estimated maximum sales volume of 160 (10,000 m³)."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "All inventory must be sold by the end of autumn (i.e., ending inventory after autumn sales is zero)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "zero_ending_inventory"
+severity = "P1"
+severity_reason = "Without this constraint, the model might allow ending inventory beyond autumn, violating the business rule that timber cannot be stored long‑term and leading to an inaccurate profit calculation."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Is it mandatory that all timber be sold by the end of autumn?", "What happens to any inventory that is left unsold after the autumn quarter?"]
+semantic_hit_rule = "The Agent's question must explicitly ask about the requirement that ending inventory must be zero, or about the need to sell all timber by the end of the horizon."
+failure_modes = ["Assuming inventory can be held indefinitely without any terminal selling obligation.", "Ignoring the liquidation requirement and allowing positive ending inventory in the model."]
+simulator_answer = "Yes, all inventory must be sold by the end of autumn. We cannot carry any unsold timber beyond that quarter."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U5", "U6", "U7", "U8", "U9", "U10", "U2", "U3", "U4"]
+content = "I need help planning timber purchasing, sales, and storage across quarters, aiming to maximize annual profit while ensuring that the storage amount at any time does not exceed the maximum warehouse capacity of 200,000 m³, and that seasonal sales respect their estimated maximum volumes: 100 (10,000 m³) in winter, 140 in spring, 200 in summer, and 160 in autumn.\n\nStorage cost parameters: a = 70, b = 100. The storage cost is (a + b*u) yuan/m³, where u is the storage time in quarters.\n\nMaximum storage capacity: 200,000 m³.\n\nTable 1-18: Purchasing and sales prices and maximum sales volumes per quarter.\n\n| Quarter | Purchase Price (10,000 yuan/10,000 m²) | Sale Price (10,000 yuan/10,000 m²) | Estimated Maximum Sales Volume (10,000 m³) |\n|---------|----------------------------------------|------------------------------------|---------------------------------------------|\n| Winter  | 410                                    | 425                                | 100                                         |\n| Spring  | 430                                    | 440                                | 140                                         |\n| Summer  | 460                                    | 465                                | 200                                         |\n| Autumn  | 450                                    | 455                                | 160                                         |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

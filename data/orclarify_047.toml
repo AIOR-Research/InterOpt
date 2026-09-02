@@ -1,0 +1,146 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_047"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help creating a farm operating plan."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Total available land: 100 hectares."
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Available funds: 15,000 yuan."
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Available labor: 3,500 person-days in autumn and winter, 4,000 person-days in spring and summer."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "External work earnings: 2.1 yuan/person-day in spring and summer, 1.8 yuan/person-day in autumn and winter."
+
+[[problem_units]]
+id = "U6"
+kind = "data"
+content = "Crop cultivation requires no specialized investment."
+
+[[problem_units]]
+id = "U7"
+kind = "data"
+content = "Investment cost per dairy cow: 400 yuan; per chicken: 3 yuan."
+
+[[problem_units]]
+id = "U8"
+kind = "data"
+content = "Land required per dairy cow for feed: 1.5 hectares."
+
+[[problem_units]]
+id = "U9"
+kind = "data"
+content = "Labor required per dairy cow: 100 person-days in autumn and winter, 50 person-days in spring and summer."
+
+[[problem_units]]
+id = "U10"
+kind = "data"
+content = "Annual net income per dairy cow: 400 yuan."
+
+[[problem_units]]
+id = "U11"
+kind = "data"
+content = "Labor required per chicken: 0.6 person-days in autumn and winter, 0.3 person-days in spring and summer."
+
+[[problem_units]]
+id = "U12"
+kind = "data"
+content = "Annual net income per chicken: 2 yuan."
+
+[[problem_units]]
+id = "U13"
+kind = "data"
+content = "Chicken coop maximum capacity: 3,000 chickens."
+
+[[problem_units]]
+id = "U14"
+kind = "data"
+content = "Cow barn maximum capacity: 32 dairy cows."
+
+[[problem_units]]
+id = "U15"
+kind = "data"
+content = "Crop labor and income requirements per year (per hectare):\n| Item           | Soybean | Corn | Wheat |\n|----------------|---------|------|-------|\n| Person-days (Autumn/Winter) | 20      | 35   | 10    |\n| Person-days (Spring/Summer) | 50      | 75   | 40    |\n| Annual Net Income (Yuan/hectare) | 175     | 300   | 120   |"
+
+[[problem_units]]
+id = "U16"
+kind = "constraint"
+content = "Total land used for crops and dairy cows must not exceed 100 hectares."
+
+[[problem_units]]
+id = "U17"
+kind = "constraint"
+content = "Total investment for animals must not exceed 15,000 yuan."
+
+[[problem_units]]
+id = "U18"
+kind = "constraint"
+content = "Total person-days used for farm activities and external work in autumn and winter must not exceed 3,500."
+
+[[problem_units]]
+id = "U19"
+kind = "constraint"
+content = "Total person-days used for farm activities and external work in spring and summer must not exceed 4,000."
+
+[[problem_units]]
+id = "U20"
+kind = "constraint"
+content = "Number of chickens cannot exceed 3,000."
+
+[[problem_units]]
+id = "U21"
+kind = "constraint"
+content = "Number of dairy cows cannot exceed 32."
+
+[[problem_units]]
+id = "U22"
+kind = "constraint"
+content = "All labor day allocations (for crops and animals) must be integer numbers of days."
+
+[[problem_units]]
+id = "U23"
+kind = "objective"
+content = "Maximize total annual net income."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "missing_objective"
+severity = "P0"
+severity_reason = "Without knowing that the objective is to maximize annual net income, the agent cannot formulate a meaningful optimization model. Any arbitrary objective would likely be incorrect."
+problem_unit_id = "U23"
+reference_acceptable_questions = ["What is the objective we are trying to optimize?", "What is the goal of the farm's operating plan?"]
+semantic_hit_rule = "The agent's question must ask about the optimization objective, specifically inquiring what the farm wants to maximize (e.g., net income, profit)."
+failure_modes = ["Silent assumption that the objective is to maximize total revenue rather than net income.", "Silent assumption that the objective is to minimize costs or maximize crop yield."]
+simulator_answer = "The goal is to maximize the total annual net income from the farm's operations."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U16", "U17", "U18", "U19", "U20", "U21", "U22", "U2", "U3", "U4", "U5", "U6", "U7", "U8", "U9", "U10", "U11", "U12", "U13", "U14", "U15"]
+content = "I need help creating a farm operating plan where total land used for crops and dairy cows must not exceed 100 hectares, total investment for animals must not exceed 15,000 yuan, total person-days used for farm activities and external work in autumn and winter must not exceed 3,500, and in spring and summer must not exceed 4,000, the number of chickens cannot exceed 3,000, the number of dairy cows cannot exceed 32, and all labor day allocations (for crops and animals) must be integer numbers of days.\n\nTotal available land: 100 hectares.\n\nAvailable funds: 15,000 yuan.\n\nAvailable labor: 3,500 person-days in autumn and winter, 4,000 person-days in spring and summer.\n\nExternal work earnings: 2.1 yuan/person-day in spring and summer, 1.8 yuan/person-day in autumn and winter.\n\nCrop cultivation requires no specialized investment.\n\nInvestment cost per dairy cow: 400 yuan; per chicken: 3 yuan.\n\nLand required per dairy cow for feed: 1.5 hectares.\n\nLabor required per dairy cow: 100 person-days in autumn and winter, 50 person-days in spring and summer.\n\nAnnual net income per dairy cow: 400 yuan.\n\nLabor required per chicken: 0.6 person-days in autumn and winter, 0.3 person-days in spring and summer.\n\nAnnual net income per chicken: 2 yuan.\n\nChicken coop maximum capacity: 3,000 chickens.\n\nCow barn maximum capacity: 32 dairy cows.\n\nCrop labor and income requirements per year (per hectare):\n| Item           | Soybean | Corn | Wheat |\n|----------------|---------|------|-------|\n| Person-days (Autumn/Winter) | 20      | 35   | 10    |\n| Person-days (Spring/Summer) | 50      | 75   | 40    |\n| Annual Net Income (Yuan/hectare) | 175     | 300   | 120   |"
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."

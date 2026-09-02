@@ -1,0 +1,102 @@
+[metadata]
+schema_version = "0.3"
+benchmark = "OR-Clarify"
+case_id = "orclarify_014"
+
+[[problem_units]]
+id = "U1"
+kind = "context"
+content = "I need help planning tonight's dinner, choosing a combination of protein and vegetables."
+
+[[problem_units]]
+id = "U2"
+kind = "data"
+content = "Protein options (per 100g):\n- Chicken: 23g protein, $3.00 cost\n- Salmon: 20g protein, $5.00 cost\n- Tofu: 8g protein, $1.50 cost"
+
+[[problem_units]]
+id = "U3"
+kind = "data"
+content = "Vegetable options (per 100g pack):\n- Broccoli: 2.8g protein, $1.20 cost\n- Carrots: 0.9g protein, $0.80 cost\n- Spinach: 2.9g protein, $1.50 cost\n- Bell Pepper: 1.0g protein, $1.00 cost\n- Mushrooms: 3.1g protein, $2.00 cost"
+
+[[problem_units]]
+id = "U4"
+kind = "data"
+content = "Total budget: $20."
+
+[[problem_units]]
+id = "U5"
+kind = "data"
+content = "Maximum total weight: 800 grams."
+
+[[problem_units]]
+id = "U6"
+kind = "objective"
+content = "Maximize total protein intake."
+
+[[problem_units]]
+id = "U7"
+kind = "assumption"
+content = "Protein options (chicken, salmon, tofu) can be bought in any quantity."
+
+[[problem_units]]
+id = "U8"
+kind = "assumption"
+content = "Vegetables are sold in 100g packs."
+
+[[problem_units]]
+id = "U9"
+kind = "constraint"
+content = "Total cost must not exceed the budget."
+
+[[problem_units]]
+id = "U10"
+kind = "constraint"
+content = "Total weight of all food must not exceed 800 grams."
+
+[[problem_units]]
+id = "U11"
+kind = "constraint"
+content = "At least three different types of vegetables must be selected."
+
+[[problem_units]]
+id = "U12"
+kind = "constraint"
+content = "Only whole packs of vegetables can be purchased (non‑negative integer number of packs)."
+
+[[hidden_slots]]
+slot_id = "H1"
+name = "protein_purchase_quantity_type"
+severity = "P1"
+severity_reason = "Without this, the agent cannot know whether proteins are continuous or discrete, impacting variable definitions. Assuming incorrectly could lead to an incorrect model."
+problem_unit_id = "U7"
+reference_acceptable_questions = ["Can I buy fractional amounts of chicken, salmon, and tofu, or are they sold in discrete packs?", "What is the purchase unit for the protein options? Is it by weight, by pack, or any amount?"]
+semantic_hit_rule = "The agent's question must explicitly ask about the purchase unit or whether proteins can be bought in fractional/continuous quantities versus discrete packs."
+failure_modes = ["Assuming proteins can only be purchased in whole 100g packs", "Assuming continuous quantities without clarification"]
+simulator_answer = "Chicken, salmon, and tofu can be bought in any quantity you like, not necessarily in whole packs."
+
+[[hidden_slots]]
+slot_id = "H2"
+name = "min_vegetable_types_required"
+severity = "P1"
+severity_reason = "Without this, the agent misses a core constraint that requires at least three distinct vegetable types, leading to a different feasible set and an incorrect solution relative to the intended problem."
+problem_unit_id = "U11"
+reference_acceptable_questions = ["Is there a minimum number of different vegetable types I need to include?", "Do I have to select at least a certain number of distinct vegetables from the list?"]
+semantic_hit_rule = "The agent's question must ask about a requirement on the number of distinct vegetable types or a minimum count of vegetable varieties."
+failure_modes = ["Assuming she just wants to maximize protein and vegetables are optional", "Assuming she only needs to select one vegetable type"]
+simulator_answer = "You need to choose at least three different types of vegetables from the list, so make sure you include at least three distinct packs of different vegetables."
+
+[initial_brief]
+visible_unit_ids = ["U1", "U6", "U8", "U9", "U10", "U12", "U2", "U3", "U4", "U5"]
+content = "I need help planning tonight's dinner, choosing a combination of protein and vegetables, to maximize total protein intake. Vegetables are sold in 100g packs and only whole packs can be purchased (non‑negative integer number of packs). Total cost must not exceed the budget and total weight of all food must not exceed 800 grams.\n\nProtein options (per 100g):\n- Chicken: 23g protein, $3.00 cost\n- Salmon: 20g protein, $5.00 cost\n- Tofu: 8g protein, $1.50 cost\n\nVegetable options (per 100g pack):\n- Broccoli: 2.8g protein, $1.20 cost\n- Carrots: 0.9g protein, $0.80 cost\n- Spinach: 2.9g protein, $1.50 cost\n- Bell Pepper: 1.0g protein, $1.00 cost\n- Mushrooms: 3.1g protein, $2.00 cost\n\nTotal budget: $20.\n\nMaximum total weight: 800 grams."
+
+[simulator]
+business_role = "business stakeholder providing the original optimization problem"
+knowledge_boundary = "The simulated user knows the case-defined hidden-slot answers when asked, but must not invent facts beyond the case-defined problem units."
+
+[solver_verification]
+status = "not_run"
+solver_script = ""
+verified_at = ""
+objective_value = ""
+solution = ""
+notes = "Do not fill route or decision-variable values until a reproducible solver run has been recorded."
