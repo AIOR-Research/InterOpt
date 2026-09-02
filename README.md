@@ -1,6 +1,18 @@
-# Anonymous Code and Data Supplement
+# Ask Before You Optimize
 
-This artifact contains the OR-Clarify benchmark cases, runnable clarification pipelines, prompt templates, and method documentation used by the submitted paper. It covers both Choice and open/free-form interaction settings.
+Official code and benchmark repository for **Ask Before You Optimize: Dynamic Pre-Formulation Clarification for Interactive Optimization**.
+
+This repository provides OR-Clarify, a benchmark for pre-formulation clarification in operations research, together with implementations of InterOPT and comparison methods under Choice and open/free-form interaction protocols. InterOPT combines **Dynamic Gap Search** and **Gap-Guided Action Search** to identify formulation-critical information gaps and guide questioning and stopping.
+
+## Authors and Contributors
+
+**Core contributors (equal contribution):** [Sihan Ge](https://github.com/Sleepyorangezz), Yichen Lin, and Chenyu Zhou.
+
+**Paper authors:** Sihan Ge, Yichen Lin, Chenyu Zhou, Jianghao Lin, Tao Yao, and Dongdong Ge.
+
+**Corresponding authors:** Jianghao Lin and Tao Yao.
+
+This repository is hosted by [AIOR-Research](https://github.com/AIOR-Research).
 
 ## Scope
 
