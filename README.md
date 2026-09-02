@@ -6,7 +6,7 @@ This repository provides OR-Clarify, a benchmark for pre-formulation clarificati
 
 ## Authors and Contributors
 
-**Core contributors (equal contribution):** [Sihan Ge](https://github.com/Sleepyorangezz), Yichen Lin, and Chenyu Zhou.
+**Core contributors (equal contribution):** Sihan Ge, Yichen Lin, and Chenyu Zhou.
 
 **Paper authors:** Sihan Ge, Yichen Lin, Chenyu Zhou, Jianghao Lin, Tao Yao, and Dongdong Ge.
 
