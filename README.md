@@ -2,7 +2,7 @@
 
 Official code and benchmark repository for **Ask Before You Optimize: Dynamic Pre-Formulation Clarification for Interactive Optimization**.
 
-A business request can leave out rules that change the optimization model. **InterOPT** asks targeted questions before formulation; **OR-Clarify** evaluates whether those missing requirements are recovered.
+“Buy low, sell high” sounds simple—but can newly purchased stock be sold immediately? Must a fixed amount remain in storage at the end? Guessing these rules can mean optimizing the wrong problem. **InterOPT** asks targeted questions before formulation, while **OR-Clarify** evaluates whether agents uncover the missing requirements.
 
 **Core contributors (equal contribution):** Sihan Ge, Yichen Lin, and Chenyu Zhou.  
 **Paper authors:** Sihan Ge, Yichen Lin, Chenyu Zhou, Jianghao Lin, Tao Yao, and Dongdong Ge.  
@@ -12,18 +12,31 @@ A business request can leave out rules that change the optimization model. **Int
 
 ## A short example
 
-Below is an adapted **Choice (MC-D)** exchange from an InterOPT workforce-planning case, with business details abstracted:
+**Business request:** Plan purchases and sales over several periods to maximize profit, within a fixed warehouse capacity.
 
-> **Agent:** During training, do trainees contribute to production?
+*Two selected turns from a Choice (MC-D) InterOPT run, shortened and anonymized; intervening turns are omitted.*
+
+> **Agent:** What happens to unsold stock at the end of the plan?
 >
-> **A.** No, they produce nothing; they only learn.  
-> **B.** Yes, they produce at the full skilled-worker rate.  
-> **C.** Yes, they produce at a reduced rate.  
+> **A.** Discard it with no value.  
+> **B.** Sell it at the final-period price.  
+> **C.** Value it at the purchase price and add it to profit.  
 > **D.** None of the above — I'd like to explain in my own words.
 >
-> **User:** A.
+> **User:** D. We must retain exactly the required quantity as ending inventory. It stays in storage, rather than being sold, discarded, or counted as profit.
 
-Selecting A confirms that trainees must be excluded from production capacity until training is complete.
+**The agent also checks resale timing:**
+
+> **Agent:** Can newly purchased stock be sold in the same period?
+>
+> **A.** Yes, it is available for sale immediately.  
+> **B.** No, sales can only come from stock held at the start of the period.  
+> **C.** Only if starting inventory cannot meet demand.  
+> **D.** None of the above — I'd like to explain in my own words.
+>
+> **User:** B.
+
+These answers add two concrete constraints: no same-period resale and an exact ending-inventory target.
 
 ## How it works
 
@@ -80,6 +93,10 @@ The single case checks the workflow. For a full Choice InterOPT evaluation, use 
 ## Benchmark and experiments
 
 OR-Clarify contains **100 TOML cases** and **178 hidden requirements**. The [data card](data/DATA_CARD.md) explains the case fields and the information available to each role. Choice uses structured answer options; Open uses free-form answers.
+
+[![Paper Figure 2: OR-Clarify construction and evaluation workflow. The agent sees only the public brief and conversation; private case facts guide the simulator, and hidden-slot rubrics guide post-hoc evaluation.](assets/or-clarify-workflow.png)](assets/or-clarify-workflow.png)
+
+*Figure 2 from the paper. From complete problems to clarification cases and transcript-based evaluation. Click the image to enlarge.*
 
 The packaged methods are linked below. Runners expose their command-line options through `--help`.
 
