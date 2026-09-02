@@ -1,6 +1,6 @@
 ![Ask Before You Optimize — OR-Clarify and InterOPT. A curious otter checks a requirements list before taking action.](assets/project-banner.png)
 
-Official code and benchmark repository for **Ask Before You Optimize: Dynamic Pre-Formulation Clarification for Interactive Optimization**.
+# Dynamic Pre-Formulation Clarification for Interactive Optimization
 
 “Buy low, sell high” sounds simple—but can newly purchased stock be sold immediately? Must a fixed amount remain in storage at the end? Guessing these rules can mean optimizing the wrong problem. **InterOPT** asks targeted questions before formulation, while **OR-Clarify** evaluates whether agents uncover the missing requirements.
 
