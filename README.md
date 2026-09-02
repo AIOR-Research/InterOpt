@@ -1,4 +1,4 @@
-# Ask Before You Optimize
+![Ask Before You Optimize — OR-Clarify and InterOPT. A curious otter checks a requirements list before taking action.](assets/project-banner.png)
 
 Official code and benchmark repository for **Ask Before You Optimize: Dynamic Pre-Formulation Clarification for Interactive Optimization**.
 
@@ -10,7 +10,7 @@ Official code and benchmark repository for **Ask Before You Optimize: Dynamic Pr
 
 ![Paper Figure 1: motivation for pre-formulation clarification. An incomplete OR request can lead to unsupported assumptions when clarification is skipped; InterOPT asks targeted questions before modeling.](assets/clarification-motivation.png)
 
-## A short example
+## 💬 A short example
 
 **Business request:** Plan purchases and sales over several periods to maximize profit, within a fixed warehouse capacity.
 
@@ -38,13 +38,13 @@ Official code and benchmark repository for **Ask Before You Optimize: Dynamic Pr
 
 These answers add two concrete constraints: no same-period resale and an exact ending-inventory target.
 
-## How it works
+## 🧠 How it works
 
 **Dynamic Gap Search** tracks formulation gaps across turns. **Gap-Guided Action Search** uses them to guide the next question or declare readiness. Both stages work from the public brief and conversation.
 
 ![InterOPT clarification loop: Dynamic Gap Search tracks gaps in the public brief and conversation; Gap-Guided Action Search decides whether to ask a targeted question or declare readiness.](assets/interopt-overview.png)
 
-## Quick start
+## 🚀 Quick start
 
 ### Set up
 
@@ -90,7 +90,7 @@ runs/quickstart/
 
 The single case checks the workflow. For a full Choice InterOPT evaluation, use the [100-case, K=5 command](experiments/interopt/README.md#run).
 
-## Benchmark and experiments
+## 🧪 Benchmark and experiments
 
 OR-Clarify contains **100 TOML cases** and **178 hidden requirements**. The [data card](data/DATA_CARD.md) explains the case fields and the information available to each role. Choice uses structured answer options; Open uses free-form answers.
 
@@ -112,7 +112,7 @@ The packaged methods are linked below. Runners expose their command-line options
 
 For the Open InterOPT runners, export the variables from `.env` into your shell before execution; these runners read the process environment directly. ORPilot and T-P-P cover only the adapted interaction stages described in their [ORPilot scope](experiments/orpilot/METHOD_SCOPE.md) and [T-P-P scope](experiments/lets_tpp/METHOD_SCOPE.md) notes.
 
-## Results at a glance
+## 📊 Results at a glance
 
 ![Paper Figure 4: exact requirement recovery versus cumulative atomic questions. Open results are shown above Choice results; the left panels show All-Slot Exact and the right panels show Core Exact.](assets/clarification-results.png)
 
