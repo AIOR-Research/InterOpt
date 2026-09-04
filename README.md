@@ -2,6 +2,8 @@
 
 # Dynamic Pre-Formulation Clarification for Interactive Optimization
 
+📦 **Dataset:** [OR-Clarify on Hugging Face](https://huggingface.co/datasets/AIOR-Research/OR-Clarify)
+
 “Buy low, sell high” sounds simple—but can newly purchased stock be sold immediately? Must a fixed amount remain in storage at the end? Guessing these rules can mean optimizing the wrong problem. **InterOPT** asks targeted questions before formulation, while **OR-Clarify** evaluates whether agents uncover the missing requirements.
 
 **Core contributors (equal contribution):** Sihan Ge, Yichen Lin, and Chenyu Zhou.  
@@ -92,7 +94,7 @@ The single case checks the workflow. For a full Choice InterOPT evaluation, use 
 
 ## 🧪 Benchmark and experiments
 
-OR-Clarify contains **100 TOML cases** and **178 hidden requirements**. The [data card](data/DATA_CARD.md) explains the case fields and the information available to each role. Choice uses structured answer options; Open uses free-form answers.
+[OR-Clarify](https://huggingface.co/datasets/AIOR-Research/OR-Clarify) contains **100 TOML cases** and **178 hidden requirements**. The [data card](data/DATA_CARD.md) explains the case fields and the information available to each role. Choice uses structured answer options; Open uses free-form answers.
 
 [![Paper Figure 2: OR-Clarify construction and evaluation workflow. The agent sees only the public brief and conversation; private case facts guide the simulator, and hidden-slot rubrics guide post-hoc evaluation.](assets/or-clarify-workflow.png)](assets/or-clarify-workflow.png)
 
